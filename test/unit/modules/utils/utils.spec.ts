@@ -2,7 +2,6 @@ import {generateGravatarUrl, GENERIC_AVATAR } from '../../../../src/utils/user';
 import { spliceURL } from '../../../../src/utils/string';
 import {
   validateName,
-  canConvertDistRemoteToLocalTarballUrl,
   convertDistRemoteToLocalTarballUrls,
   parseReadme,
   addGravatarSupport,
@@ -29,8 +28,6 @@ setup([]);
 describe('Utilities', () => {
   const buildURI = (host, version) =>
     `http://${host}/npm_test/-/npm_test-${version}.tgz`;
-  const buildURIWithPrefix = (host, version, prefix) =>
-    `http://${host}${prefix}npm_test/-/npm_test-${version}.tgz`;
   const fakeHost = 'fake.com';
   const metadata: any = {
     name: 'npm_test',
@@ -146,48 +143,6 @@ describe('Utilities', () => {
             protocol: 'http'
           });
         expect(convertDist.versions['1.0.0'].dist.tarball).toEqual(convertDist.versions['1.0.0'].dist.tarball);
-      });
-
-      test('should build a URI for dist tarball with url_prefix', () => {
-        const urlPrefix = '/sub_directory/';
-        const convertDist = convertDistRemoteToLocalTarballUrls(cloneMetadata(),
-          {
-            headers: {
-              host: fakeHost
-            },
-            // @ts-ignore
-            get: () => 'http',
-            protocol: 'http'
-          },
-          urlPrefix);
-        expect(convertDist.versions['1.0.0'].dist.tarball).toEqual(buildURIWithPrefix(fakeHost, '1.0.0', urlPrefix));
-        expect(convertDist.versions['1.0.1'].dist.tarball).toEqual(buildURIWithPrefix(fakeHost, '1.0.1', urlPrefix));
-      });
-    });
-
-    describe('canConvertDistRemoteToLocalTarballUrl', () => {
-      test('should return true if config.store is missing', () => {
-        const config = {};
-        expect(canConvertDistRemoteToLocalTarballUrl(config)).toBe(true);
-      });
-
-      test('should return true if config.convert_to_local_tarball_url is missing', () => {
-        const config = {};
-        expect(canConvertDistRemoteToLocalTarballUrl(config)).toBe(true);
-      });
-
-      test('should return true if config.convert_to_local_tarball_url is true', () => {
-        const config = {
-          convert_to_local_tarball_url: true
-        };
-        expect(canConvertDistRemoteToLocalTarballUrl(config)).toBe(true);
-      });
-
-      test('should return false if config.convert_to_local_tarball_url is false', () => {
-        const config = {
-          convert_to_local_tarball_url: false
-        };
-        expect(canConvertDistRemoteToLocalTarballUrl(config)).toBe(false);
       });
     });
 

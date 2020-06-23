@@ -6,7 +6,6 @@ import {
   sortByName,
   parseReadme,
   formatAuthor,
-  canConvertDistRemoteToLocalTarballUrl,
   convertDistRemoteToLocalTarballUrls,
   getLocalRegistryTarballUri,
   isVersionValid
@@ -119,8 +118,7 @@ function addPackageWebApi(route: Router, storage: IStorageHandler, auth: IAuth, 
         if (_.isNil(err)) {
           const {v} = req.query;
           let sideBarInfo: any = _.clone(info);
-          if (canConvertDistRemoteToLocalTarballUrl(config))
-            sideBarInfo.versions = convertDistRemoteToLocalTarballUrls(info, req, config.url_prefix).versions;
+          sideBarInfo.versions = convertDistRemoteToLocalTarballUrls(info, req, config.url_prefix).versions;
           if (isVersionValid(info, v)) {
             sideBarInfo.latest = sideBarInfo.versions[v];
             sideBarInfo.latest.author = formatAuthor(sideBarInfo.latest.author);

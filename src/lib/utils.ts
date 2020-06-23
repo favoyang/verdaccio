@@ -164,16 +164,6 @@ export function extractTarballFromUrl(url: string): string {
 }
 
 /**
- * Detect whether can convert dist remote to local tarball urls.
- * @param {*} config
- * @return {Boolean}
- */
-export function canConvertDistRemoteToLocalTarballUrl(config: any): boolean {
-  if (_.isNil(config.convert_to_local_tarball_url)) return true;
-  return config.convert_to_local_tarball_url;
-}
-
-/**
  * Iterate a packages's versions and filter each original tarball url.
  * @param {*} pkg
  * @param {*} req
@@ -196,9 +186,6 @@ export function convertDistRemoteToLocalTarballUrls(pkg: Package, req: Request, 
 /**
  * Filter a tarball url.
  * @param {*} uri
- * @param {*} pkgName
- * @param {*} req
- * @param {*} urlPrefix
  * @return {String} a parsed url
  */
 export function getLocalRegistryTarballUri(
