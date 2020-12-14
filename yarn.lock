@@ -2230,15 +2230,10 @@
   resolved "https://registry.npmjs.org/@verdaccio/types/-/types-9.7.0.tgz#6ec72aee7be2617c609cd736cb6e7b70cc5199c7"
   integrity sha512-QeijEgVBVRTGyOteIl+RD4aiEbiUM1SkN7UAjZxhwns0o2YebdO+Z2iphmx0EZdo4STnWLuGSRlJexTaU/+lDQ==
 
-"@verdaccio/ui-theme@1.11.0":
-  version "1.11.0"
-  resolved "https://registry.verdaccio.org/@verdaccio%2fui-theme/-/ui-theme-1.11.0.tgz#78316f7983760c1ad7b6bc84a7c54730af802c75"
-  integrity sha512-ggXPyCueh8CtHFrpZsq7kP+pLxKPsiTuoCGmYNIquZ/p99A6eIAVLElqHFJfgGATsdVlFQKWG/AawCfxD5ymUw==
-
-"@verdaccio/ui-theme@^1.0.0":
-  version "1.5.0"
-  resolved "https://registry.verdaccio.org/@verdaccio%2fui-theme/-/ui-theme-1.5.0.tgz#748e2db1772106a4de64dbed1152e16cd4b34a7c"
-  integrity sha512-OLkTTJPnBgUDsRrGqIg5RC3NBmb7wolQEPrTGE1ScuVe0sO3351fw+TFj/hx5Oepbv4PqxknYossmWcrMaSq6Q==
+"@verdaccio/ui-theme@1.15.0", "@verdaccio/ui-theme@^1.0.0":
+  version "1.15.0"
+  resolved "https://registry.npmjs.org/@verdaccio/ui-theme/-/ui-theme-1.15.0.tgz#8aeef449caf3781888ed8853d38185dfd91f3cea"
+  integrity sha512-5P/zdkbgVBODkMTCdQDdbP5umuPugy/Gvt0JyVISwhvs3Id45VhHtfB7UGpim0yh+1427n19gOyHYZkW7jT7hg==
 
 "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
