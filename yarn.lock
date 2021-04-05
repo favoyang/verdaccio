@@ -2206,7 +2206,16 @@
     lodash "4.17.15"
     mkdirp "0.5.5"
 
-"@verdaccio/readme@9.7.0", "@verdaccio/readme@^9.3.3":
+"@verdaccio/readme@10.0.0":
+  version "10.0.0"
+  resolved "https://registry.npmjs.org/@verdaccio/readme/-/readme-10.0.0.tgz#f9627c32b309ace311318b98b2c42226823f6cd7"
+  integrity sha512-OD3dMnRC8SvhgytEzczMBleN+K/3lMqyWw/epeXvolCpCd7mW/Dl5zSR25GiHh/2h3eTKP/HMs4km8gS1MMLgA==
+  dependencies:
+    dompurify "^2.2.6"
+    jsdom "15.2.1"
+    marked "^2.0.1"
+
+"@verdaccio/readme@^9.3.3":
   version "9.7.0"
   resolved "https://registry.npmjs.org/@verdaccio/readme/-/readme-9.7.0.tgz#5e6df8a6a4ab730f8f515ee7feba08bd4e48b235"
   integrity sha512-Q7dSqfIUR9EhLQ9dyYQMxY7SydgDYnlwMR6IXVek87Z38yxDi6v4r/hN+OEtndUCfcsvt/smBcw1DraXO2t0cQ==
@@ -3915,6 +3924,11 @@ dompurify@2.0.8:
   version "2.0.8"
   resolved "https://registry.verdaccio.org/dompurify/-/dompurify-2.0.8.tgz#6ef89d2d227d041af139c7b01d9f67ed59c2eb3c"
   integrity sha512-vIOSyOXkMx81ghEalh4MLBtDHMx1bhKlaqHDMqM2yeitJ996SLOk5mGdDpI9ifJAgokred8Rmu219fX4OltqXw==
+
+dompurify@^2.2.6:
+  version "2.2.7"
+  resolved "https://registry.npmjs.org/dompurify/-/dompurify-2.2.7.tgz#a5f055a2a471638680e779bd08fc334962d11fd8"
+  integrity sha512-jdtDffdGNY+C76jvodNTu9jt5yYj59vuTUyx+wXdzcSwAGTYZDAQkQ7Iwx9zcGrA4ixC1syU4H3RZROqRxokxg==
 
 dot-prop@^3.0.0:
   version "3.0.0"
@@ -6779,6 +6793,11 @@ marked@0.8.2:
   version "0.8.2"
   resolved "https://registry.verdaccio.org/marked/-/marked-0.8.2.tgz#4faad28d26ede351a7a1aaa5fec67915c869e355"
   integrity sha512-EGwzEeCcLniFX51DhTpmTom+dSA/MG/OBUDjnWtHbEnjAH180VzUeAw+oE4+Zv+CoYBWyRlYOTR0N8SO9R1PVw==
+
+marked@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/marked/-/marked-2.0.1.tgz#5e7ed7009bfa5c95182e4eb696f85e948cefcee3"
+  integrity sha512-5+/fKgMv2hARmMW7DOpykr2iLhl0NgjyELk5yn92iE7z8Se1IS9n3UsFm86hFXIkvMBmVxki8+ckcpjBeyo/hw==
 
 matcher@^1.0.0:
   version "1.1.1"
