@@ -8,7 +8,9 @@ The following table describes the versions of this project that are currently su
 | ------- | ------------------ |
 | 2.x   | :x:                  |
 | 3.x   | :x:   |
-| 4.x   | :white_check_mark:   |
+| 4.x   | :white_check_mark: (until 1st July 2021)  |
+| 5.x   | :white_check_mark:   |
+
 
 ## Responsible disclosure security policy
 
@@ -19,6 +21,8 @@ When contacting us directly via email, we will do our best efforts to respond in
 We kindly ask you to refrain from malicious acts that put our users, the project, or any of the project’s team members at risk.
 
 ## Reporting a security issue
+
+> Please do not use the provided email address to report issues which are not related to security vulnerabilities
 
 At Verdaccio, we consider the security of our systems a top priority. But no matter how much effort we put into system security, there can still be vulnerabilities present.
 

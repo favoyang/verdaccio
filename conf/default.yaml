@@ -19,6 +19,8 @@ web:
   # sort_packages: asc
   # convert your UI to the dark side
   # darkMode: true
+  # logo: http://somedomain/somelogo.png
+  # favicon: http://somedomain/favicon.ico | /path/favicon.ico
 
 # translate your registry, api i18n not available yet
 # i18n:
@@ -72,14 +74,15 @@ middlewares:
     enabled: true
 
 # log settings
-logs:
-  - { type: stdout, format: pretty, level: http }
-  #- {type: file, path: verdaccio.log, level: info}
+logs: { type: stdout, format: pretty, level: http }
+
 #experiments:
 #  # support for npm token command
 #  token: false
 #  # support for the new v1 search endpoint, functional by incomplete read more on ticket 1732
 #  search: false
+#  # disable writing body size to logs, read more on ticket 1912
+#  bytesin_off: false
 
 # This affect the web and api (not developed yet)
 #i18n:

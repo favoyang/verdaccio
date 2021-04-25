@@ -27,6 +27,10 @@ packages:
     access: $all
     publish: $all
     proxy: npmjs
+  'timeout':
+    access: $all
+    publish: $all
+    proxy: socketTimeout
   '@scope/*':
     access: test
     publish: dsadsa
@@ -82,4 +86,4 @@ packages:
     unpublish: xxx
     proxy: npmjs
 logs:
-  - { type: stdout, format: pretty, level: warn }
+  - { type: stdout, format: pretty, level: trace }
