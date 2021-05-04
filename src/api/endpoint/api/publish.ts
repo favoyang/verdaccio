@@ -93,7 +93,6 @@ export default function publish(router: Router, auth: IAuth, storage: IStorageHa
 
   // removing a tarball
   router.delete('/:package/-/:filename/-rev/:revision', can('unpublish'), can('publish'), removeTarball(storage));
-  router.delete('/verdaccio/:package/:filename/-rev/:revision', can('unpublish'), can('publish'), removeTarball(storage));
 
   // uploading package tarball
   router.put('/:package/-/:filename/*', can('publish'), media(HEADERS.OCTET_STREAM), uploadPackageTarball(storage));
