@@ -1,11 +1,12 @@
-import { URL } from 'url';
-import path from 'path';
 import buildDebug from 'debug';
 import LRU from 'lru-cache';
+import path from 'path';
+import { URL } from 'url';
+
 import { HEADERS } from '@verdaccio/commons-api';
 
-import { getPublicUrl, isHTTPProtocol } from '../../../lib/utils';
 import { WEB_TITLE } from '../../../lib/constants';
+import { getPublicUrl, hasLogin, isHTTPProtocol } from '../../../lib/utils';
 import renderTemplate from './template';
 
 const pkgJSON = require('../../../../package.json');
@@ -49,7 +50,9 @@ export default function renderHTML(config, manifest, manifestFiles, req, res) {
   const darkMode = config?.web?.darkMode ?? false;
   const title = config?.web?.title ?? WEB_TITLE;
   const scope = config?.web?.scope ?? '';
+  const login = hasLogin(config);
   const logoURI = resolveLogo(config, req);
+  const pkgManagers = config?.web?.pkgManagers ?? ['yarn', 'pnpm', 'npm'];
   const version = pkgJSON.version;
   const primaryColor = validatePrimaryColor(config?.web?.primary_color) ?? '#4b5e40';
   const { scriptsBodyAfter, metaScripts, scriptsbodyBefore } = Object.assign(
@@ -68,6 +71,8 @@ export default function renderHTML(config, manifest, manifestFiles, req, res) {
     base,
     primaryColor,
     version,
+    pkgManagers,
+    login,
     logo: logoURI,
     title,
     scope,

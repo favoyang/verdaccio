@@ -1,24 +1,28 @@
-import _ from 'lodash';
 import Cookies from 'cookies';
+import express, { Response, Router } from 'express';
+import _ from 'lodash';
 
 import { Config, RemoteUser } from '@verdaccio/types';
-import { Response, Router } from 'express';
-import { ErrorCode } from '../../../lib/utils';
-import { API_ERROR, API_MESSAGE, HTTP_STATUS } from '../../../lib/constants';
-import { createRemoteUser, createSessionToken, getApiToken, getAuthenticatedMessage, validatePassword } from '../../../lib/auth-utils';
-import { logger } from '../../../lib/logger';
 
-import { $RequestExtend, $ResponseExtend, $NextFunctionVer, IAuth } from '../../../../types';
+import { $NextFunctionVer, $RequestExtend, $ResponseExtend, IAuth } from '../../../../types';
+import { createRemoteUser, createSessionToken, getApiToken, getAuthenticatedMessage, validatePassword } from '../../../lib/auth-utils';
+import { API_ERROR, API_MESSAGE, HEADERS, HTTP_STATUS } from '../../../lib/constants';
+import { logger } from '../../../lib/logger';
+import { ErrorCode } from '../../../lib/utils';
+import { limiter } from '../../rate-limiter';
 
 export default function (route: Router, auth: IAuth, config: Config): void {
-  route.get('/-/user/:org_couchdb_user', function (req: $RequestExtend, res: Response, next: $NextFunctionVer): void {
+  /* eslint new-cap:off */
+  const userRouter = express.Router();
+
+  userRouter.get('/-/user/:org_couchdb_user', limiter(config?.userRateLimit), function (req: $RequestExtend, res: Response, next: $NextFunctionVer): void {
     res.status(HTTP_STATUS.OK);
     next({
       ok: getAuthenticatedMessage(req.remote_user.name),
     });
   });
 
-  route.put('/-/user/:org_couchdb_user/:_rev?/:revision?', function (req: $RequestExtend, res: Response, next: $NextFunctionVer): void {
+  userRouter.put('/-/user/:org_couchdb_user/:_rev?/:revision?', limiter(config?.userRateLimit), function (req: $RequestExtend, res: Response, next: $NextFunctionVer): void {
     const { name, password } = req.body;
     const remoteName = req.remote_user.name;
 
@@ -33,7 +37,7 @@ export default function (route: Router, auth: IAuth, config: Config): void {
         const token = await getApiToken(auth, config, restoredRemoteUser, password);
 
         res.status(HTTP_STATUS.CREATED);
-
+        res.set(HEADERS.CACHE_CONTROL, 'no-cache, no-store');
         return next({
           ok: getAuthenticatedMessage(req.remote_user.name),
           token,
@@ -60,6 +64,7 @@ export default function (route: Router, auth: IAuth, config: Config): void {
 
         req.remote_user = user;
         res.status(HTTP_STATUS.CREATED);
+        res.set(HEADERS.CACHE_CONTROL, 'no-cache, no-store');
         return next({
           ok: `user '${req.body.name}' created`,
           token,
@@ -68,7 +73,7 @@ export default function (route: Router, auth: IAuth, config: Config): void {
     }
   });
 
-  route.delete('/-/user/token/*', function (req: $RequestExtend, res: Response, next: $NextFunctionVer): void {
+  userRouter.delete('/-/user/token/*', limiter(config?.userRateLimit), function (req: $RequestExtend, res: Response, next: $NextFunctionVer): void {
     res.status(HTTP_STATUS.OK);
     next({
       ok: API_MESSAGE.LOGGED_OUT,
@@ -77,7 +82,7 @@ export default function (route: Router, auth: IAuth, config: Config): void {
 
   // placeholder 'cause npm require to be authenticated to publish
   // we do not do any real authentication yet
-  route.post('/_session', Cookies.express(), function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
+  userRouter.post('/_session', Cookies.express(), function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
     res.cookies.set('AuthSession', String(Math.random()), createSessionToken());
 
     next({
@@ -86,4 +91,6 @@ export default function (route: Router, auth: IAuth, config: Config): void {
       roles: [],
     });
   });
+
+  route.use(userRouter);
 }

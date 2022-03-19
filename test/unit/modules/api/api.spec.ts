@@ -1,20 +1,19 @@
+import _ from 'lodash';
+import nock from 'nock';
 import path from 'path';
+import rimraf from 'rimraf';
 import { Readable } from 'stream';
 import request from 'supertest';
-import _ from 'lodash';
-import rimraf from 'rimraf';
-import nock from 'nock';
 
+import endPointAPI from '../../../../src/api';
+import { API_ERROR, API_MESSAGE, HEADERS, HEADER_TYPE, HTTP_STATUS, TOKEN_BEARER } from '../../../../src/lib/constants';
+import { buildToken, encodeScopedUri } from '../../../../src/lib/utils';
+import { DOMAIN_SERVERS } from '../../../functional/config.functional';
+import { generateUnPublishURI, getNewToken, getPackage, putPackage, verifyPackageVersionDoesExist } from '../../__helper/api';
+import { mockServer } from '../../__helper/mock';
+import { generateDeprecateMetadata, generatePackageMetadata, generatePackageUnpublish, generateStarMedatada, generateVersion } from '../../__helper/utils';
 import configDefault from '../../partials/config';
 import publishMetadata from '../../partials/publish-api';
-import endPointAPI from '../../../../src/api';
-
-import { HEADERS, API_ERROR, HTTP_STATUS, HEADER_TYPE, API_MESSAGE, TOKEN_BEARER } from '../../../../src/lib/constants';
-import { mockServer } from '../../__helper/mock';
-import { DOMAIN_SERVERS } from '../../../functional/config.functional';
-import { buildToken, encodeScopedUri } from '../../../../src/lib/utils';
-import { getNewToken, getPackage, putPackage, verifyPackageVersionDoesExist, generateUnPublishURI } from '../../__helper/api';
-import { generatePackageMetadata, generatePackageUnpublish, generateStarMedatada, generateDeprecateMetadata, generateVersion } from '../../__helper/utils';
 
 const sleep = (delay) => {
   return new Promise((resolve) => {
@@ -200,7 +199,7 @@ describe('endpoint unit test', () => {
             const token = res.body.token;
             expect(typeof token).toBe('string');
             expect(res.body.ok).toMatch(`user '${credentials.name}' created`);
-
+            expect(res.get(HEADERS.CACHE_CONTROL)).toEqual('no-cache, no-store');
             // testing JWT auth headers with token
             // we need it here, because token is required
             request(app)
@@ -272,6 +271,7 @@ describe('endpoint unit test', () => {
             if (err) {
               return done(err);
             }
+            expect(res.get(HEADERS.CACHE_CONTROL)).toEqual('no-cache, no-store');
             expect(res.body).toBeTruthy();
             done();
           });
@@ -1071,6 +1071,28 @@ describe('endpoint unit test', () => {
         const [, res] = await getPackage(request(app), '', pkgName);
         expect(res.body.versions[version].deprecated).toEqual('get deprecated');
         expect(res.body.versions['1.0.1'].deprecated).toEqual('get deprecated');
+        done();
+      });
+
+      test('should deprecate when publish new version with deprecate field', async (done) => {
+        await Promise.all([
+          putPackage(request(app), `/${pkgName}`, generatePackageMetadata(pkgName, '2.0.0'), token),
+          putPackage(request(app), `/${pkgName}`, generatePackageMetadata(pkgName, '2.0.1'), token),
+          putPackage(request(app), `/${pkgName}`, generatePackageMetadata(pkgName, '2.0.2'), token),
+        ]);
+
+        const pkg = generatePackageMetadata(pkgName, '2.0.3');
+        pkg.versions['2.0.3'].deprecated = 'get deprecated';
+        await putPackage(request(app), `/${encodeScopedUri(pkgName)}`, pkg, token);
+
+        const [, res] = await getPackage(request(app), '', pkgName);
+        const versions = Object.keys(res.body.versions);
+
+        expect(res.body.versions['2.0.3'].deprecated).toEqual('get deprecated');
+        expect(versions).toContain('2.0.0');
+        expect(versions).toContain('2.0.1');
+        expect(versions).toContain('2.0.2');
+        expect(versions).toContain('2.0.3');
         done();
       });
     });

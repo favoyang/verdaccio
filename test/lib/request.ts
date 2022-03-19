@@ -1,6 +1,7 @@
 import assert from 'assert';
 import _ from 'lodash';
 import request from 'request';
+
 import { IRequestPromise } from '../types';
 
 const requestData = Symbol('smart_request_data');
@@ -51,7 +52,6 @@ export class PromiseAssert extends Promise<any> implements IRequestPromise {
   }
 
   public body_error(expected: any) {
-    // $FlowFixMe
     const selfData = this[requestData];
 
     return injectResponse(
@@ -97,7 +97,6 @@ export class PromiseAssert extends Promise<any> implements IRequestPromise {
 }
 
 function injectResponse(smartObject: any, promise: Promise<any>): Promise<any> {
-  // $FlowFixMe
   promise[requestData] = smartObject[requestData];
   return promise;
 }

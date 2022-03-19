@@ -1,8 +1,7 @@
-import pino from 'pino';
-import _ from 'lodash';
 import buildDebug from 'debug';
 import { yellow } from 'kleur';
-import { padLeft } from './utils';
+import _ from 'lodash';
+import pino from 'pino';
 
 function isProd() {
   return process.env.NODE_ENV === 'production';
@@ -20,16 +19,7 @@ export type LogPlugin = {
 export type LogType = 'file' | 'stdout';
 export type LogFormat = 'json' | 'pretty-timestamped' | 'pretty';
 
-export function createLogger(
-  options = {level: 'http'},
-  destination = pino.destination(1),
-  format: LogFormat = DEFAULT_LOG_FORMAT,
-  prettyPrintOptions = {
-    // we hide warning since the prettifier should not be used in production
-    // https://getpino.io/#/docs/pretty?id=prettifier-api
-    suppressFlushSyncWarning: true,
-  }
-) {
+export function createLogger(options = { level: 'http' }, destination = pino.destination(1), format: LogFormat = DEFAULT_LOG_FORMAT, prettyPrintOptions) {
   if (_.isNil(format)) {
     format = DEFAULT_LOG_FORMAT;
   }
@@ -63,10 +53,10 @@ export function createLogger(
   }
   const logger = pino(pinoConfig, destination);
 
-  if(process.env.DEBUG) {
+  if (process.env.DEBUG) {
     logger.on('level-change', (lvl, val, prevLvl, prevVal) => {
       debug('%s (%d) was changed to %s (%d)', lvl, val, prevLvl, prevVal);
-    })
+    });
   }
 
   return logger;
@@ -85,6 +75,7 @@ const DEFAULT_LOGGER_CONF: LoggerConfigItem = {
   type: 'stdout',
   format: 'pretty',
   level: 'http',
+  colors: true,
 };
 
 export type LoggerConfigItem = {
@@ -93,6 +84,7 @@ export type LoggerConfigItem = {
   format?: LogFormat;
   path?: string;
   level?: string;
+  colors?: boolean;
 };
 
 export type LoggerConfig = LoggerConfigItem[];
@@ -110,21 +102,37 @@ export function setup(options: LoggerConfig | LoggerConfigItem = [DEFAULT_LOGGER
   // next major will thrown an error
   let loggerConfig = isLegacyConf ? options[0] : options;
   if (!loggerConfig?.level) {
-    loggerConfig = Object.assign({}, {
-      level: 'http',
-    }, loggerConfig);
+    loggerConfig = Object.assign(
+      {},
+      {
+        level: 'http',
+      },
+      loggerConfig
+    );
   }
   const pinoConfig = { level: loggerConfig.level };
+  let colors = typeof loggerConfig?.colors === 'boolean' ? Boolean(loggerConfig?.colors) : process.stdout.isTTY;
+  if ('EXPERIMENTAL_VERDACCIO_LOGGER_COLORS' in process.env) {
+    colors = process.env.EXPERIMENTAL_VERDACCIO_LOGGER_COLORS != 'false';
+  }
+  const prettyPrintOptions = {
+    // we hide warning since the prettifier should not be used in production
+    // https://getpino.io/#/docs/pretty?id=prettifier-api
+    suppressFlushSyncWarning: true,
+    colors,
+  };
   if (loggerConfig.type === 'file') {
     debug('logging file enabled');
-    logger = createLogger(pinoConfig, pino.destination(loggerConfig.path), loggerConfig.format);
+    const destination = pino.destination(loggerConfig.path);
+    process.on('SIGUSR2', () => destination.reopen());
+    logger = createLogger(pinoConfig, destination, loggerConfig.format, prettyPrintOptions);
   } else if (loggerConfig.type === 'rotating-file') {
     process.emitWarning('rotating-file type is not longer supported, consider use [logrotate] instead');
     debug('logging stdout enabled');
-    logger = createLogger(pinoConfig, pino.destination(1), loggerConfig.format);
+    logger = createLogger(pinoConfig, pino.destination(1), loggerConfig.format, prettyPrintOptions);
   } else {
     debug('logging stdout enabled');
-    logger = createLogger(pinoConfig, pino.destination(1), loggerConfig.format);
+    logger = createLogger(pinoConfig, pino.destination(1), loggerConfig.format, prettyPrintOptions);
   }
 
   if (isProd()) {

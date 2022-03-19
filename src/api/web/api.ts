@@ -1,12 +1,12 @@
-import { Router } from 'express';
 import bodyParser from 'body-parser';
+import { Router } from 'express';
+
 import { Config } from '@verdaccio/types';
-import Search from '../../lib/search';
-import { match, validateName, validatePackage, setSecurityWebHeaders } from '../middleware';
+
 import { IAuth, IStorageHandler } from '../../../types';
-import addUserAuthApi from './endpoint/user';
-import addPackageWebApi from './endpoint/package';
-import addSearchWebApi from './endpoint/search';
+import Search from '../../lib/search';
+import { match, setSecurityWebHeaders, validateName, validatePackage } from '../middleware';
+import webApi from './endpoint';
 
 const route = Router(); /* eslint new-cap: 0 */
 
@@ -15,12 +15,9 @@ const route = Router(); /* eslint new-cap: 0 */
 */
 export default function (config: Config, auth: IAuth, storage: IStorageHandler): Router {
   Search.configureStorage(storage);
-
   // validate all of these params as a package name
   // this might be too harsh, so ask if it causes trouble
-  // $FlowFixMe
   route.param('package', validatePackage);
-  // $FlowFixMe
   route.param('filename', validateName);
   route.param('version', validateName);
   route.param('anything', match(/.*/));
@@ -28,15 +25,6 @@ export default function (config: Config, auth: IAuth, storage: IStorageHandler):
   route.use(bodyParser.urlencoded({ extended: false }));
   route.use(auth.webUIJWTmiddleware());
   route.use(setSecurityWebHeaders);
-
-  addPackageWebApi(route, storage, auth, config);
-  addSearchWebApi(route, storage, auth);
-  addUserAuthApi(route, auth, config);
-
-  // What are you looking for? logout? client side will remove token when user click logout,
-  // or it will auto expire after 24 hours.
-  // This token is different with the token send to npm client.
-  // We will/may replace current token with JWT in next major release, and it will not expire at all(configurable).
-
+  route.use(webApi(auth, storage, config));
   return route;
 }

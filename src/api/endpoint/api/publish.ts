@@ -1,18 +1,18 @@
-import Path from 'path';
-import _ from 'lodash';
 import buildDebug from 'debug';
-import mime from 'mime';
-
 import { Router } from 'express';
-import { Config, Callback, MergeTags, Version, Package } from '@verdaccio/types';
-import { API_MESSAGE, HEADERS, DIST_TAGS, API_ERROR, HTTP_STATUS } from '../../../lib/constants';
-import { validateMetadata, isObject, ErrorCode, hasDiffOneKey, isRelatedToDeprecation } from '../../../lib/utils';
-import { media, expectJson, allow } from '../../middleware';
-import { notify } from '../../../lib/notify';
+import _ from 'lodash';
+import mime from 'mime';
+import Path from 'path';
 
-import { IAuth, $ResponseExtend, $RequestExtend, $NextFunctionVer, IStorageHandler } from '../../../../types';
+import { Callback, Config, MergeTags, Package, Version } from '@verdaccio/types';
+
+import { $NextFunctionVer, $RequestExtend, $ResponseExtend, IAuth, IStorageHandler } from '../../../../types';
+import { API_ERROR, API_MESSAGE, DIST_TAGS, HEADERS, HTTP_STATUS } from '../../../lib/constants';
 import { logger } from '../../../lib/logger';
+import { notify } from '../../../lib/notify';
 import { isPublishablePackage } from '../../../lib/storage-utils';
+import { ErrorCode, hasDiffOneKey, isObject, isRelatedToDeprecation, validateMetadata } from '../../../lib/utils';
+import { allow, expectJson, media } from '../../middleware';
 import star from './star';
 
 const debug = buildDebug('verdaccio:publish');
@@ -216,8 +216,8 @@ export function publishPackage(storage: IStorageHandler, config: Config, auth: I
 
     try {
       const metadata = validateMetadata(req.body, packageName);
-      // treating deprecation as updating a package
-      if (req.params._rev || isRelatedToDeprecation(req.body)) {
+      // check _attachments to distinguish publish and deprecate
+      if (req.params._rev || (isRelatedToDeprecation(req.body) && _.isEmpty(req.body._attachments))) {
         debug('updating a new version for %o', packageName);
         // we check unpublish permissions, an update is basically remove versions
         const remote = req.remote_user;

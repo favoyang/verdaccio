@@ -1,10 +1,10 @@
 // @flow
-
+import buildDebug from 'debug';
 import { Response } from 'express';
 import _ from 'lodash';
-import buildDebug from 'debug';
-import { USERS, HTTP_STATUS } from '../../../lib/constants';
-import { $RequestExtend, $NextFunctionVer, IStorageHandler } from '../../../../types';
+
+import { $NextFunctionVer, $RequestExtend, IStorageHandler } from '../../../../types';
+import { HTTP_STATUS, USERS } from '../../../lib/constants';
 import { logger } from '../../../lib/logger';
 
 const debug = buildDebug('verdaccio:star');

@@ -1,14 +1,16 @@
-import _ from 'lodash';
 import buildDebug from 'debug';
 import { Response, Router } from 'express';
+import _ from 'lodash';
+
 import { Config, RemoteUser, Token } from '@verdaccio/types';
-import { HTTP_STATUS, SUPPORT_ERRORS } from '../../../../lib/constants';
-import { ErrorCode, mask } from '../../../../lib/utils';
-import { getApiToken } from '../../../../lib/auth-utils';
-import { stringToMD5 } from '../../../../lib/crypto-utils';
-import { logger } from '../../../../lib/logger';
 
 import { $NextFunctionVer, $RequestExtend, IAuth, IStorageHandler } from '../../../../../types';
+import { getApiToken } from '../../../../lib/auth-utils';
+import { HEADERS, HTTP_STATUS, SUPPORT_ERRORS } from '../../../../lib/constants';
+import { stringToMD5 } from '../../../../lib/crypto-utils';
+import { logger } from '../../../../lib/logger';
+import { ErrorCode, mask } from '../../../../lib/utils';
+import { limiter } from '../../../rate-limiter';
 
 const debug = buildDebug('verdaccio:token');
 export type NormalizeToken = Token & {
@@ -23,8 +25,9 @@ function normalizeToken(token: Token): NormalizeToken {
 }
 
 // https://github.com/npm/npm-profile/blob/latest/lib/index.js
-export default function (route: Router, auth: IAuth, storage: IStorageHandler, config: Config): void {
-  route.get('/-/npm/v1/tokens', async function (req: $RequestExtend, res: Response, next: $NextFunctionVer) {
+export default function (auth: IAuth, storage: IStorageHandler, config: Config): Router {
+  const tokenRoute = Router(); /* eslint new-cap: 0 */
+  tokenRoute.get('/tokens', limiter(config?.userRateLimit), async function (req: $RequestExtend, res: Response, next: $NextFunctionVer) {
     const { name } = req.remote_user;
 
     if (_.isNil(name) === false) {
@@ -47,7 +50,7 @@ export default function (route: Router, auth: IAuth, storage: IStorageHandler, c
     return next(ErrorCode.getUnauthorized());
   });
 
-  route.post('/-/npm/v1/tokens', function (req: $RequestExtend, res: Response, next: $NextFunctionVer) {
+  tokenRoute.post('/tokens', limiter(config?.userRateLimit), function (req: $RequestExtend, res: Response, next: $NextFunctionVer) {
     const { password, readonly, cidr_whitelist } = req.body;
     const { name } = req.remote_user;
 
@@ -89,6 +92,7 @@ export default function (route: Router, auth: IAuth, storage: IStorageHandler, c
 
         await storage.saveToken(saveToken);
         debug('token %o was created for user %o', key, name);
+        res.set(HEADERS.CACHE_CONTROL, 'no-cache, no-store');
         return next(
           normalizeToken({
             token,
@@ -106,7 +110,7 @@ export default function (route: Router, auth: IAuth, storage: IStorageHandler, c
     });
   });
 
-  route.delete('/-/npm/v1/tokens/token/:tokenKey', async (req: $RequestExtend, res: Response, next: $NextFunctionVer) => {
+  tokenRoute.delete('/tokens/token/:tokenKey', limiter(config?.userRateLimit), async (req: $RequestExtend, res: Response, next: $NextFunctionVer) => {
     const {
       params: { tokenKey },
     } = req;
@@ -125,4 +129,6 @@ export default function (route: Router, auth: IAuth, storage: IStorageHandler, c
     }
     return next(ErrorCode.getUnauthorized());
   });
+
+  return tokenRoute;
 }

@@ -2,6 +2,229 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.8.0](https://github.com/verdaccio/verdaccio/compare/v5.7.1...v5.8.0) (2022-03-12)
+
+
+### Features
+
+* update ui with new modal banner ([#3062](https://github.com/verdaccio/verdaccio/issues/3062)) ([2ad085a](https://github.com/verdaccio/verdaccio/commit/2ad085a8e2adf3c19b3b2c7172b50f1a9cd6c9df))
+
+### [5.7.1](https://github.com/verdaccio/verdaccio/compare/v5.7.0...v5.7.1) (2022-03-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @verdaccio/ui-theme to v6.0.0-6-next.21 ([#3050](https://github.com/verdaccio/verdaccio/issues/3050)) ([ace754d](https://github.com/verdaccio/verdaccio/commit/ace754ddffb20ba4c465cfec409291d5d4f51142))
+* missing colors on terminal ([#3049](https://github.com/verdaccio/verdaccio/issues/3049)) ([0f51a6c](https://github.com/verdaccio/verdaccio/commit/0f51a6ced5ee453b1cb6d7b375960d4b21ea4834))
+* **deps:** update dependency dayjs to v1.10.8 ([#3036](https://github.com/verdaccio/verdaccio/issues/3036)) ([1221ffd](https://github.com/verdaccio/verdaccio/commit/1221ffd512fb678aee75cbe5f877670c32e1a056))
+* **deps:** update dependency express to v4.17.3 ([#3039](https://github.com/verdaccio/verdaccio/issues/3039)) ([21c66f6](https://github.com/verdaccio/verdaccio/commit/21c66f65c3eae4bc0048056258376300785e87ff))
+* **deps:** update dependency minimatch to v5 ([#3035](https://github.com/verdaccio/verdaccio/issues/3035)) ([2ef97d4](https://github.com/verdaccio/verdaccio/commit/2ef97d48470ee30bef59274472c14b14ba9cb29a))
+* **deps:** update dependency verdaccio-htpasswd to v10.3.0 ([#3038](https://github.com/verdaccio/verdaccio/issues/3038)) ([24830e0](https://github.com/verdaccio/verdaccio/commit/24830e06e8dd7c00f783177a2048be0524ef42aa))
+
+## [5.7.0](https://github.com/verdaccio/verdaccio/compare/v5.6.2...v5.7.0) (2022-03-04)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @verdaccio/ui-theme to v6.0.0-6-next.20 ([#3028](https://github.com/verdaccio/verdaccio/issues/3028)) ([87e5e74](https://github.com/verdaccio/verdaccio/commit/87e5e74ea472bb107bb0d0c549531cbe4ed626a4))
+
+### [5.6.2](https://github.com/verdaccio/verdaccio/compare/v5.6.1...v5.6.2) (2022-02-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @verdaccio/ui-theme to v6.0.0-6-next.18 ([#3019](https://github.com/verdaccio/verdaccio/issues/3019)) ([7cff3f7](https://github.com/verdaccio/verdaccio/commit/7cff3f7693626aab4543d9c0ae0236416c8c2c9b))
+* **deps:** update dependency pino to v6.14.0 ([#3018](https://github.com/verdaccio/verdaccio/issues/3018)) ([08b72b4](https://github.com/verdaccio/verdaccio/commit/08b72b46638587041d42040875ff92f4c4409548))
+
+### [5.6.1](https://github.com/verdaccio/verdaccio/compare/v5.6.0...v5.6.1) (2022-02-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @verdaccio/ui-theme to v6.0.0-6-next.17 ([#3014](https://github.com/verdaccio/verdaccio/issues/3014)) ([f57508d](https://github.com/verdaccio/verdaccio/commit/f57508d6f3cdcea731ddb75e71f867e846b8d0dd))
+
+## [5.6.0](https://github.com/verdaccio/verdaccio/compare/v5.5.2...v5.6.0) (2022-02-15)
+
+
+### Features
+
+* new environment variable (storage path)  ([#2993](https://github.com/verdaccio/verdaccio/issues/2993)) ([681dc82](https://github.com/verdaccio/verdaccio/commit/681dc821aab9f031b959c802f172f06dc6672864)), closes [PR#2199](https://github.com/verdaccio/PR/issues/2199) [PR#2199](https://github.com/verdaccio/PR/issues/2199) [PR#2199](https://github.com/verdaccio/PR/issues/2199)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @verdaccio/commons-api to v10.2.0 ([#2986](https://github.com/verdaccio/verdaccio/issues/2986)) ([63fc4d1](https://github.com/verdaccio/verdaccio/commit/63fc4d1baf836ad3f6a52db0cc20ec4df34e7e4a))
+* **deps:** update dependency @verdaccio/local-storage to v10.2.0 ([#2987](https://github.com/verdaccio/verdaccio/issues/2987)) ([1db0a2e](https://github.com/verdaccio/verdaccio/commit/1db0a2ebf5137d6f5c1d82d4fc1437c4b6f060d9))
+* **deps:** update dependency @verdaccio/readme to v10.3.2 ([#2984](https://github.com/verdaccio/verdaccio/issues/2984)) ([fee3ac6](https://github.com/verdaccio/verdaccio/commit/fee3ac670a8fd0aa9446022f502c64fd07629eba))
+* **deps:** update dependency @verdaccio/streams to v10.2.0 ([#2995](https://github.com/verdaccio/verdaccio/issues/2995)) ([60fea02](https://github.com/verdaccio/verdaccio/commit/60fea02ad15cb84d07ed1072e3c8a83208026200))
+* **deps:** update dependency marked to v4.0.12 ([#2976](https://github.com/verdaccio/verdaccio/issues/2976)) ([2cd4a3b](https://github.com/verdaccio/verdaccio/commit/2cd4a3bb073cdf03fc39b5e90263da1a669c6748))
+* **deps:** update dependency verdaccio-audit to v10.2.0 ([#2998](https://github.com/verdaccio/verdaccio/issues/2998)) ([57c4ce5](https://github.com/verdaccio/verdaccio/commit/57c4ce5a19b6591b1a441879fdfcc2efa44acfc3))
+* **deps:** update dependency verdaccio-htpasswd to v10.2.0 ([#2999](https://github.com/verdaccio/verdaccio/issues/2999)) ([25b2212](https://github.com/verdaccio/verdaccio/commit/25b22128b8e966812cefd9b680db63f6df5aab8f))
+
+### [5.5.2](https://github.com/verdaccio/verdaccio/compare/v5.5.1...v5.5.2) (2022-01-27)
+
+
+### Bug Fixes
+
+* re-opening log files using SIGUSR2 ([#2966](https://github.com/verdaccio/verdaccio/issues/2966)) ([b964c0d](https://github.com/verdaccio/verdaccio/commit/b964c0d4881cb998cb3e58f25b93cfa4326bdc28))
+
+### [5.5.1](https://github.com/verdaccio/verdaccio/compare/v5.5.0...v5.5.1) (2022-01-24)
+
+
+### Bug Fixes
+
+* remove engines restriction from ui-theme dependency ([de7713e](https://github.com/verdaccio/verdaccio/commit/de7713ecc1390ff44899ae13737d934bb9bbb964))
+* **deps:** update dependency marked to v4 ([#2956](https://github.com/verdaccio/verdaccio/issues/2956)) ([5009797](https://github.com/verdaccio/verdaccio/commit/50097976ed965e6f28d3900859b73e52a1553ff0))
+* **deps:** update dependency mime to v3 ([#2957](https://github.com/verdaccio/verdaccio/issues/2957)) ([ac4392a](https://github.com/verdaccio/verdaccio/commit/ac4392a22135f5f4654b0e6fa6d0039a649ee899))
+
+## [5.5.0](https://github.com/verdaccio/verdaccio/compare/v5.4.0...v5.5.0) (2022-01-22)
+
+
+### Features
+
+* add new options to the web disable login and pkg managers ([#2947](https://github.com/verdaccio/verdaccio/issues/2947)) ([1a7b1ee](https://github.com/verdaccio/verdaccio/commit/1a7b1ee8ad79c0a164f8bae7160b55919c18c0f1))
+* upgrade [@verdaccio-ui-theme](https://github.com/verdaccio-ui-theme)  ([d36b8b1](https://github.com/verdaccio/verdaccio/commit/d36b8b1e00ed4180424af160dcf0d53697d8a905))
+* use backward compatible UI from v6 on v5 ([#2912](https://github.com/verdaccio/verdaccio/issues/2912)) ([b79266d](https://github.com/verdaccio/verdaccio/commit/b79266d54e7310ed879e80e0beda95ebbeb2470c))
+
+
+### Bug Fixes
+
+* **deps:** update all non-major linting dependencies (5.x) ([#2885](https://github.com/verdaccio/verdaccio/issues/2885)) ([23d0bd7](https://github.com/verdaccio/verdaccio/commit/23d0bd7056333bd87bf232c93f25f6f6e853816f))
+* **deps:** update dependency @verdaccio/local-storage to v10.1.1 ([#2932](https://github.com/verdaccio/verdaccio/issues/2932)) ([8c7e39e](https://github.com/verdaccio/verdaccio/commit/8c7e39e8f3547fc59cfabcf6a58276894f8c4e9d))
+* **deps:** update dependency @verdaccio/readme to v10.2.1 ([#2933](https://github.com/verdaccio/verdaccio/issues/2933)) ([8a75f8c](https://github.com/verdaccio/verdaccio/commit/8a75f8cc360813a04e3b6c553ca5db4e213c7dd8))
+* **deps:** update dependency async to v3.2.3 ([#2934](https://github.com/verdaccio/verdaccio/issues/2934)) ([e2eb6ce](https://github.com/verdaccio/verdaccio/commit/e2eb6ce27feb4097fe9940db46ad67ce99b35547))
+* **deps:** update dependency fast-safe-stringify to v2.1.1 ([#2891](https://github.com/verdaccio/verdaccio/issues/2891)) ([bd738ec](https://github.com/verdaccio/verdaccio/commit/bd738ecf6026d70c249aa8a00a32f8e95fe80e8d))
+* **deps:** update dependency verdaccio-audit to v10.1.1 ([#2935](https://github.com/verdaccio/verdaccio/issues/2935)) ([3a9d773](https://github.com/verdaccio/verdaccio/commit/3a9d77341596904e0b5f637b4e81fe4037f65d8a))
+* update babel and core dependencies ([#2887](https://github.com/verdaccio/verdaccio/issues/2887)) ([ec98159](https://github.com/verdaccio/verdaccio/commit/ec98159c3c5e3e890e749a3d8fd555b4c5c0be63))
+* update docker to v14.18.2 ([#2888](https://github.com/verdaccio/verdaccio/issues/2888)) ([22cfea0](https://github.com/verdaccio/verdaccio/commit/22cfea09070a060437fe01a74e9bd12b2cf834d9))
+* **deps:** update dependency pino to v6.13.4 ([#2829](https://github.com/verdaccio/verdaccio/issues/2829)) ([1ec77e7](https://github.com/verdaccio/verdaccio/commit/1ec77e760570658b6b4b5f44c927c6e52ceadd46))
+
+## [5.4.0](https://github.com/verdaccio/verdaccio/compare/v5.3.2...v5.4.0) (2021-12-24)
+
+
+### Features
+
+* add cache-control header to endpoints ([#2791](https://github.com/verdaccio/verdaccio/issues/2791)) ([fd3ad1e](https://github.com/verdaccio/verdaccio/commit/fd3ad1e546f5293e862d767f23b3714e6dd5dc8c))
+* add rate limit to user api endpoints ([#2800](https://github.com/verdaccio/verdaccio/issues/2800)) ([#2799](https://github.com/verdaccio/verdaccio/issues/2799)) ([f64e403](https://github.com/verdaccio/verdaccio/commit/f64e403f0a1d710a0d866ca2db480199c83a3609))
+* add rate limit to web endpoints ([#2799](https://github.com/verdaccio/verdaccio/issues/2799)) ([c91d6be](https://github.com/verdaccio/verdaccio/commit/c91d6beb8bde1c5f275d7f570209cf723dce47c5))
+* allow override user rate limit and user agent ([#2803](https://github.com/verdaccio/verdaccio/issues/2803)) ([5b1264c](https://github.com/verdaccio/verdaccio/commit/5b1264c733ea249efc38e963f0e99fb093d61406))
+* jwt default time new set ([#2787](https://github.com/verdaccio/verdaccio/issues/2787)) ([1c17d09](https://github.com/verdaccio/verdaccio/commit/1c17d0986ea551b427994f8392a9d8ef29ba88e9))
+* user agent is the client by default ([#2793](https://github.com/verdaccio/verdaccio/issues/2793)) ([e5d79ce](https://github.com/verdaccio/verdaccio/commit/e5d79ce8f00a18f0c0646b761f22dc608b5baf87))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @verdaccio/commons-api to v10.1.0 ([#2789](https://github.com/verdaccio/verdaccio/issues/2789)) ([c5c0ef8](https://github.com/verdaccio/verdaccio/commit/c5c0ef8750abeb50d933c639a2041d25a889820b))
+* **deps:** update dependency body-parser to v1.19.1 ([#2788](https://github.com/verdaccio/verdaccio/issues/2788)) ([46e583f](https://github.com/verdaccio/verdaccio/commit/46e583f683520b3a69dbd14ed43146492c0e80be))
+
+### [5.3.2](https://github.com/verdaccio/verdaccio/compare/v5.3.1...v5.3.2) (2021-12-16)
+
+
+### Bug Fixes
+
+* publish with deprecated field ([#2771](https://github.com/verdaccio/verdaccio/issues/2771)) ([b5ac3c0](https://github.com/verdaccio/verdaccio/commit/b5ac3c0f287b8d9ae9121a47d6ac9d27e2bd4ce6)), closes [#2766](https://github.com/verdaccio/verdaccio/issues/2766)
+
+### [5.3.1](https://github.com/verdaccio/verdaccio/compare/v5.3.0...v5.3.1) (2021-12-11)
+
+
+### Bug Fixes
+
+* conflict core-js dependency ([#2754](https://github.com/verdaccio/verdaccio/issues/2754)) ([29d4551](https://github.com/verdaccio/verdaccio/commit/29d4551e5bfc066a5ff7109786a73ec8e782a65f))
+
+## [5.3.0](https://github.com/verdaccio/verdaccio/compare/v5.2.2...v5.3.0) (2021-12-08)
+
+
+### Bug Fixes
+
+* markdown anchor links in package readme.md broken [#2712](https://github.com/verdaccio/verdaccio/issues/2712) ([820c9d5](https://github.com/verdaccio/verdaccio/commit/820c9d5db2fe7e99cab3c75c431b8df7dfd096d0))
+* update pnpm and bum up core deps ([#2716](https://github.com/verdaccio/verdaccio/issues/2716)) ([60cd25c](https://github.com/verdaccio/verdaccio/commit/60cd25ce4fe107f7d25780447289b6fb0e21d4b6))
+* **deps:** update dependency @verdaccio/commons-api to v10.0.2 ([#2706](https://github.com/verdaccio/verdaccio/issues/2706)) ([73d565f](https://github.com/verdaccio/verdaccio/commit/73d565f5f558b7746f538d8fbbb15ea24dcedb23))
+* **deps:** update dependency @verdaccio/readme to v10.0.1 ([#2708](https://github.com/verdaccio/verdaccio/issues/2708)) ([41cadcc](https://github.com/verdaccio/verdaccio/commit/41cadccaef358bb11f4b2f015b0885f32dffa91a))
+* **deps:** update dependency @verdaccio/streams to v10.0.1 ([#2709](https://github.com/verdaccio/verdaccio/issues/2709)) ([74d7d02](https://github.com/verdaccio/verdaccio/commit/74d7d02c396185f76767f234592eb14f497d7929))
+* **deps:** update dependency http-errors to v1.8.1 ([#2705](https://github.com/verdaccio/verdaccio/issues/2705)) ([eee19a5](https://github.com/verdaccio/verdaccio/commit/eee19a5f791dd93f4ee078243ed310fa88aa5ae7))
+* **deps:** update dependency verdaccio-audit to v10.0.3 ([#2710](https://github.com/verdaccio/verdaccio/issues/2710)) ([8c074e8](https://github.com/verdaccio/verdaccio/commit/8c074e8f24e61e9c399bf4f2e6dbaa0d5d5da9fd))
+* **deps:** update dependency verdaccio-htpasswd to v10.0.1 ([#2711](https://github.com/verdaccio/verdaccio/issues/2711)) ([8e28848](https://github.com/verdaccio/verdaccio/commit/8e2884836b4d8a659ca1cec80794c7e30ef6c208))
+
+### [5.2.2](https://github.com/verdaccio/verdaccio/compare/v5.2.1...v5.2.2) (2021-11-08)
+
+
+### Bug Fixes
+
+* update python dependency on docker image ([#2644](https://github.com/verdaccio/verdaccio/issues/2644)) ([0eab3e1](https://github.com/verdaccio/verdaccio/commit/0eab3e1746e4479bc9baad0e74e10cb23f197f0e))
+
+### [5.2.1](https://github.com/verdaccio/verdaccio/compare/v5.2.0...v5.2.1) (2021-11-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency async to v3.2.2 ([#2633](https://github.com/verdaccio/verdaccio/issues/2633)) ([da5d7e9](https://github.com/verdaccio/verdaccio/commit/da5d7e96cbb05e0244347c39ae160e5008f85b8f))
+* **deps:** update dependency mime to v2.6.0 ([#2634](https://github.com/verdaccio/verdaccio/issues/2634)) ([089796c](https://github.com/verdaccio/verdaccio/commit/089796ca471af45def091736be5fcad54141f4e7))
+* **deps:** update dependency validator to v13.7.0 ([#2635](https://github.com/verdaccio/verdaccio/issues/2635)) ([ef2fbff](https://github.com/verdaccio/verdaccio/commit/ef2fbff7558a5417d13a44e32f2bdf90df7d480e))
+
+## [5.2.0](https://github.com/verdaccio/verdaccio/compare/v5.1.6...v5.2.0) (2021-10-24)
+
+
+### Features
+
+* upgrade node docker to 14.18.1 ([#2579](https://github.com/verdaccio/verdaccio/issues/2579)) ([247a317](https://github.com/verdaccio/verdaccio/commit/247a317ca025c3e52ffa5a7ca3f45e586714c70c))
+
+
+### Bug Fixes
+
+* **deps:** update dependency clipanion to v3.1.0 ([#2561](https://github.com/verdaccio/verdaccio/issues/2561)) ([6a78ae0](https://github.com/verdaccio/verdaccio/commit/6a78ae0045968715f158b55d17bae71612540800))
+* **deps:** update dependency dayjs to v1.10.7 ([#2565](https://github.com/verdaccio/verdaccio/issues/2565)) ([69091d1](https://github.com/verdaccio/verdaccio/commit/69091d15fbc7e1b479e02c47769237f2792926c8))
+* **deps:** update dependency pino to v6.13.3 ([#2562](https://github.com/verdaccio/verdaccio/issues/2562)) ([384b3e2](https://github.com/verdaccio/verdaccio/commit/384b3e2ce560cd513f2a20bf62f98a3f3051dccf))
+
+### [5.1.6](https://github.com/verdaccio/verdaccio/compare/v5.1.5...v5.1.6) (2021-09-21)
+
+
+### Bug Fixes
+
+* update dependencies security update ([#2453](https://github.com/verdaccio/verdaccio/issues/2453)) ([9d7ddd9](https://github.com/verdaccio/verdaccio/commit/9d7ddd9ecd4b69a0d0cb63eb72489ec7118c9d4f))
+
+### [5.1.5](https://github.com/verdaccio/verdaccio/compare/v5.1.4...v5.1.5) (2021-09-17)
+
+
+### Bug Fixes
+
+* add finish language to ui ([#2443](https://github.com/verdaccio/verdaccio/issues/2443)) ([360bec9](https://github.com/verdaccio/verdaccio/commit/360bec9b5315c0bc1c93ca36e1a1d8f808f0746c))
+
+### [5.1.4](https://github.com/verdaccio/verdaccio/compare/v5.1.3...v5.1.4) (2021-09-07)
+
+
+### Bug Fixes
+
+* npm7 audit fix and bulk endpoint ([#2426](https://github.com/verdaccio/verdaccio/issues/2426)) ([2c59091](https://github.com/verdaccio/verdaccio/commit/2c590917b10672da102b2352f6ff9c78f073763a))
+
+### [5.1.3](https://github.com/verdaccio/verdaccio/compare/v5.1.2...v5.1.3) (2021-08-20)
+
+
+### Bug Fixes
+
+* plugin allow_publish (pkg) got a undefined version ([#2315](https://github.com/verdaccio/verdaccio/issues/2315)) ([ecfc4c3](https://github.com/verdaccio/verdaccio/commit/ecfc4c33048a6f2cb1cef179fe9b0a11da389d26))
+* update docker and core dependencies ([#2375](https://github.com/verdaccio/verdaccio/issues/2375)) ([2e995f5](https://github.com/verdaccio/verdaccio/commit/2e995f5981c1a5eca6f43b14e52f06564acf6d8e))
+* update docker base image to v14.17.5 ([d63dcc0](https://github.com/verdaccio/verdaccio/commit/d63dcc02facddd8b6da2a32da067a6acf239e25d))
+
+### [5.1.2](https://github.com/verdaccio/verdaccio/compare/v5.1.1...v5.1.2) (2021-07-14)
+
+
+### Bug Fixes
+
+* remove token experiment flag ([#2332](https://github.com/verdaccio/verdaccio/issues/2332)) ([2924054](https://github.com/verdaccio/verdaccio/commit/29240544b16381c4eaaa04f80f09c89fc443fc6d))
+* update dependencies ([#2291](https://github.com/verdaccio/verdaccio/issues/2291)) ([b421ed8](https://github.com/verdaccio/verdaccio/commit/b421ed87c49535d14e8ed3d332300af58ad0b575))
+* update dependencies ([#2303](https://github.com/verdaccio/verdaccio/issues/2303)) ([4fe8ddf](https://github.com/verdaccio/verdaccio/commit/4fe8ddf7c705b27c362d96389dcade2534f323b4))
+* update dependencies ([#2333](https://github.com/verdaccio/verdaccio/issues/2333)) ([7180338](https://github.com/verdaccio/verdaccio/commit/7180338c447845bb494f0b34fe7e1a481fb5298d))
+* update docker base image node 14.17.1 ([#2314](https://github.com/verdaccio/verdaccio/issues/2314)) ([b8f711a](https://github.com/verdaccio/verdaccio/commit/b8f711afabc60b69cfaf9aef4fd4831680e17f13))
+* update docker base image node 14.17.3 ([2bc5908](https://github.com/verdaccio/verdaccio/commit/2bc590895c27e15e4f9cc0577fdc3a1308e97dd6))
+
+### [5.1.1](https://github.com/verdaccio/verdaccio/compare/v5.1.0...v5.1.1) (2021-06-12)
+
+
+### Bug Fixes
+
+* add logger fatal if fails on startup ([#2288](https://github.com/verdaccio/verdaccio/issues/2288)) ([558dd3f](https://github.com/verdaccio/verdaccio/commit/558dd3f3c631b58231b239c1b38a44b5174f9228)), closes [#2287](https://github.com/verdaccio/verdaccio/issues/2287)
+* improve get headers from request [#2190](https://github.com/verdaccio/verdaccio/issues/2190) ([#2271](https://github.com/verdaccio/verdaccio/issues/2271)) ([38ca095](https://github.com/verdaccio/verdaccio/commit/38ca095fb041c768c1ea85f4d922f808c124777c))
+
 ## [5.1.0](https://github.com/verdaccio/verdaccio/compare/v5.0.4...v5.1.0) (2021-05-24)
 
 

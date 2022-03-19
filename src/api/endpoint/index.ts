@@ -1,27 +1,22 @@
-import { Config } from '@verdaccio/types';
-import _ from 'lodash';
-import express from 'express';
 import bodyParser from 'body-parser';
+import express from 'express';
+import _ from 'lodash';
+
+import { Config } from '@verdaccio/types';
+
 import { IAuth, IStorageHandler } from '../../../types';
-import whoami from './api/whoami';
-import ping from './api/ping';
-import user from './api/user';
 import distTags from './api/dist-tags';
+import pkg from './api/package';
+import ping from './api/ping';
 import publish from './api/publish';
 import search from './api/search';
-import pkg from './api/package';
 import stars from './api/stars';
-import profile from './api/v1/profile';
-import token from './api/v1/token';
+import user from './api/user';
+import npmV1 from './api/v1';
 import v1Search from './api/v1/search';
+import whoami from './api/whoami';
 
-const {
-  match,
-  validateName,
-  validatePackage,
-  encodeScopePackage,
-  antiLoop
-} = require('../middleware');
+const { match, validateName, validatePackage, encodeScopePackage, antiLoop } = require('../middleware');
 
 export default function (config: Config, auth: IAuth, storage: IStorageHandler) {
   /* eslint new-cap:off */
@@ -50,16 +45,13 @@ export default function (config: Config, auth: IAuth, storage: IStorageHandler) 
   // for "npm whoami"
   whoami(app);
   pkg(app, auth, storage, config);
-  profile(app, auth);
   search(app, auth, storage);
-  user(app, auth, config);
   distTags(app, auth, storage);
   publish(app, auth, storage, config);
   ping(app);
   stars(app, storage);
   v1Search(app, auth, storage);
-  if (_.get(config, 'experiments.token') === true) {
-    token(app, auth, storage, config);
-  }
+  user(app, auth, config);
+  app.use(npmV1(auth, storage, config));
   return app;
 }

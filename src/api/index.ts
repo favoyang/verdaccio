@@ -1,22 +1,24 @@
-import _ from 'lodash';
-import express, { Application } from 'express';
 import compression from 'compression';
 import cors from 'cors';
+import express, { Application } from 'express';
 import { HttpError } from 'http-errors';
+import _ from 'lodash';
+
 import { Config as IConfig, IPluginMiddleware, IPluginStorageFilter } from '@verdaccio/types';
-import Storage from '../lib/storage';
-import loadPlugin from '../lib/plugin-loader';
+
+import { $NextFunctionVer, $RequestExtend, $ResponseExtend, IAuth, IStorageHandler } from '../../types';
 import Auth from '../lib/auth';
-import { ErrorCode } from '../lib/utils';
-import { API_ERROR, HTTP_STATUS } from '../lib/constants';
 import AppConfig from '../lib/config';
-import { $ResponseExtend, $RequestExtend, $NextFunctionVer, IStorageHandler, IAuth } from '../../types';
-import { setup, logger } from '../lib/logger';
-import webAPI from './web/api';
-import web from './web';
-import apiEndpoint from './endpoint';
+import { API_ERROR, HTTP_STATUS } from '../lib/constants';
+import { logger, setup } from '../lib/logger';
+import loadPlugin from '../lib/plugin-loader';
+import Storage from '../lib/storage';
+import { ErrorCode, getUserAgent } from '../lib/utils';
 import hookDebug from './debug';
-import { log, final, errorReportingMiddleware, serveFavicon } from './middleware';
+import apiEndpoint from './endpoint';
+import { errorReportingMiddleware, final, log, serveFavicon } from './middleware';
+import web from './web';
+import webAPI from './web/api';
 
 const defineAPI = function (config: IConfig, storage: IStorageHandler): any {
   const auth: IAuth = new Auth(config);
@@ -30,10 +32,14 @@ const defineAPI = function (config: IConfig, storage: IStorageHandler): any {
   // Router setup
   app.use(log(config));
   app.use(errorReportingMiddleware);
-  app.use(function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
-    res.setHeader('X-Powered-By', config.user_agent);
-    next();
-  });
+  if (config.user_agent) {
+    app.use(function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
+      res.setHeader('X-Powered-By', getUserAgent(config.user_agent));
+      next();
+    });
+  } else {
+    app.disable('x-powered-by');
+  }
 
   app.use(compression());
 

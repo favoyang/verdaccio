@@ -1,20 +1,19 @@
+import _ from 'lodash';
+import nock from 'nock';
 import path from 'path';
+import rimraf from 'rimraf';
 import { Readable } from 'stream';
 import request from 'supertest';
-import _ from 'lodash';
-import rimraf from 'rimraf';
-import nock from 'nock';
 
+import endPointAPI from '../../../../src/api';
+import { API_ERROR, API_MESSAGE, HEADERS, HEADER_TYPE, HTTP_STATUS, TOKEN_BEARER } from '../../../../src/lib/constants';
+import { buildToken, encodeScopedUri } from '../../../../src/lib/utils';
+import { DOMAIN_SERVERS } from '../../../functional/config.functional';
+import { generateUnPublishURI, getNewToken, getPackage, putPackage, verifyPackageVersionDoesExist } from '../../__helper/api';
+import { mockServer } from '../../__helper/mock';
+import { generateDeprecateMetadata, generatePackageMetadata, generatePackageUnpublish, generateStarMedatada, generateVersion } from '../../__helper/utils';
 import configDefault from '../../partials/config';
 import publishMetadata from '../../partials/publish-api';
-import endPointAPI from '../../../../src/api';
-
-import { HEADERS, API_ERROR, HTTP_STATUS, HEADER_TYPE, API_MESSAGE, TOKEN_BEARER } from '../../../../src/lib/constants';
-import { mockServer } from '../../__helper/mock';
-import { DOMAIN_SERVERS } from '../../../functional/config.functional';
-import { buildToken, encodeScopedUri } from '../../../../src/lib/utils';
-import { getNewToken, getPackage, putPackage, verifyPackageVersionDoesExist, generateUnPublishURI } from '../../__helper/api';
-import { generatePackageMetadata, generatePackageUnpublish, generateStarMedatada, generateDeprecateMetadata, generateVersion } from '../../__helper/utils';
 
 const sleep = (delay) => {
   return new Promise((resolve) => {
@@ -95,7 +94,7 @@ describe('endpoint unit test', () => {
     test('should perform a search with results', (done) => {
       const searchAllResponse = require(path.join(__dirname, 'partials', 'search-all.json'));
       const query = '/-/all/since?stale=update_after&startkey=111';
-      nock('http://0.0.0.0:55549').get(query).reply(200, searchAllResponse);
+      nock('http://localhost:55549').get(query).reply(200, searchAllResponse);
       request(app)
         .get('/-/all/since?stale=update_after&startkey=111')
         .set('accept-encoding', HEADERS.JSON)
@@ -118,7 +117,7 @@ describe('endpoint unit test', () => {
       const searchV1 = require(path.join(__dirname, 'partials', 'search-v1-empty.json'));
       const query = '/-/v1/search?text=verdaccio&size=3&quality=0.65&popularity=0.98&maintenance=0.5';
       jest.spyOn(Date.prototype, 'toUTCString').mockReturnValue('Fri, 14 May 2021 21:29:10 GMT');
-      nock('http://0.0.0.0:55549').get(query).reply(200, searchV1);
+      nock('http://localhost:55549').get(query).reply(200, searchV1);
       request(app)
         .get(query)
         .set('accept-encoding', HEADERS.JSON)
@@ -139,7 +138,7 @@ describe('endpoint unit test', () => {
       const searchV1 = require(path.join(__dirname, 'partials', 'search-v1.json'));
       const query = '/-/v1/search?text=verdaccio&size=3&quality=0.65&popularity=0.98&maintenance=0.5';
       jest.spyOn(Date.prototype, 'toUTCString').mockReturnValue('Fri, 14 May 2021 21:29:10 GMT');
-      nock('http://0.0.0.0:55549').get(query).reply(200, searchV1);
+      nock('http://localhost:55549').get(query).reply(200, searchV1);
       request(app)
         .get(query)
         .set('accept-encoding', HEADERS.JSON)
@@ -162,7 +161,7 @@ describe('endpoint unit test', () => {
       const searchV1 = require(path.join(__dirname, 'partials', 'search-v1-forbidden.json'));
       const query = '/-/v1/search?text=verdaccio&size=3&quality=0.65&popularity=0.98&maintenance=0.5';
       jest.spyOn(Date.prototype, 'toUTCString').mockReturnValue('Fri, 14 May 2021 21:29:10 GMT');
-      nock('http://0.0.0.0:55549').get(query).reply(200, searchV1);
+      nock('http://localhost:55549').get(query).reply(200, searchV1);
       request(app)
         .get(query)
         .set('accept-encoding', HEADERS.JSON)
@@ -183,7 +182,7 @@ describe('endpoint unit test', () => {
 
     test('should perform a search v1 with error', () => {
       const query = '/-/v1/search?text=verdaccio&size=3&quality=0.65&popularity=0.98&maintenance=0.5';
-      nock('http://0.0.0.0:55549').get(query).reply(500);
+      nock('http://localhost:55549').get(query).reply(500);
       return request(app)
         .get(query)
         .set('accept-encoding', HEADERS.JSON)

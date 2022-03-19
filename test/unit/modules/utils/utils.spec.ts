@@ -1,26 +1,28 @@
 import * as httpMocks from 'node-mocks-http';
+
 import { HEADERS } from '@verdaccio/commons-api';
-import { generateGravatarUrl, GENERIC_AVATAR } from '../../../../src/utils/user';
-import { spliceURL } from '../../../../src/utils/string';
-import {
-  validateName,
-  convertDistRemoteToLocalTarballUrls,
-  parseReadme,
-  addGravatarSupport,
-  validatePackage,
-  validateMetadata,
-  combineBaseUrl,
-  getVersion,
-  normalizeDistTags,
-  getWebProtocol,
-  getVersionFromTarball,
-  sortByName,
-  formatAuthor,
-  isHTTPProtocol,
-  getPublicUrl,
-} from '../../../../src/lib/utils';
-import { DIST_TAGS, DEFAULT_USER } from '../../../../src/lib/constants';
+
+import { DEFAULT_USER, DIST_TAGS } from '../../../../src/lib/constants';
 import { logger, setup } from '../../../../src/lib/logger';
+import {
+  addGravatarSupport,
+  combineBaseUrl,
+  convertDistRemoteToLocalTarballUrls,
+  formatAuthor,
+  getPublicUrl,
+  getVersion,
+  getVersionFromTarball,
+  getWebProtocol,
+  isHTTPProtocol,
+  normalizeDistTags,
+  parseReadme,
+  sortByName,
+  validateMetadata,
+  validateName,
+  validatePackage,
+} from '../../../../src/lib/utils';
+import { spliceURL } from '../../../../src/utils/string';
+import { GENERIC_AVATAR, generateGravatarUrl } from '../../../../src/utils/user';
 import { readFile } from '../../../functional/lib/test.utils';
 
 const readmeFile = (fileName = 'markdown.md') => readFile(`../../unit/partials/readme/${fileName}`);
@@ -885,6 +887,21 @@ describe('Utilities', () => {
       });
 
       expect(getPublicUrl(undefined, req)).toEqual('http://some.com/');
+      delete process.env.VERDACCIO_FORWARDED_PROTO;
+    });
+
+    test('with the VERDACCIO_FORWARDED_PROTO undefined', () => {
+      process.env.VERDACCIO_FORWARDED_PROTO = undefined;
+      const req = httpMocks.createRequest({
+        method: 'GET',
+        headers: {
+          host: 'some.com',
+          [HEADERS.FORWARDED_PROTO]: 'https',
+        },
+        url: '/',
+      });
+
+      expect(getPublicUrl('/test/', req)).toEqual('http://some.com/test/');
       delete process.env.VERDACCIO_FORWARDED_PROTO;
     });
   });

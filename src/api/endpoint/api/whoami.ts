@@ -1,9 +1,10 @@
 import { Response, Router } from 'express';
-import { $RequestExtend, $NextFunctionVer } from '../../../../types';
+
+import { $NextFunctionVer, $RequestExtend } from '../../../../types';
 
 export default function (route: Router): void {
   route.get('/whoami', (req: $RequestExtend, res: Response, next: $NextFunctionVer): void => {
-    if (req.headers.referer === 'whoami') {
+    if (req.get('referer') === 'whoami') {
       next({ username: req.remote_user.name });
     } else {
       next('route');

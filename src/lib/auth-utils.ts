@@ -1,11 +1,13 @@
-import _ from 'lodash';
 import buildDebug from 'debug';
-import { RemoteUser, Package, Callback, Config, Security, APITokenOptions, JWTOptions, IPluginAuth } from '@verdaccio/types';
-import { CookieSessionToken, IAuthWebUI, AuthMiddlewarePayload, AuthTokenHeader, BasicPayload } from '../../types';
+import _ from 'lodash';
+
+import { APITokenOptions, Callback, Config, IPluginAuth, JWTOptions, Package, RemoteUser, Security } from '@verdaccio/types';
+
+import { AuthMiddlewarePayload, AuthTokenHeader, BasicPayload, CookieSessionToken, IAuthWebUI } from '../../types';
 import { logger } from '../lib/logger';
-import { convertPayloadToBase64, ErrorCode } from './utils';
-import { API_ERROR, HTTP_STATUS, ROLES, TIME_EXPIRATION_7D, TOKEN_BASIC, TOKEN_BEARER, DEFAULT_MIN_LIMIT_PASSWORD } from './constants';
+import { API_ERROR, DEFAULT_MIN_LIMIT_PASSWORD, HTTP_STATUS, ROLES, TIME_EXPIRATION_1H, TOKEN_BASIC, TOKEN_BEARER } from './constants';
 import { aesDecrypt, verifyPayload } from './crypto-utils';
+import { ErrorCode, convertPayloadToBase64 } from './utils';
 
 const debug = buildDebug('verdaccio');
 
@@ -115,14 +117,20 @@ export function createSessionToken(): CookieSessionToken {
 
 const defaultWebTokenOptions: JWTOptions = {
   sign: {
-    // The expiration token for the website is 7 days
-    expiresIn: TIME_EXPIRATION_7D,
+    // The expiration token for the website is 1 hour
+    expiresIn: TIME_EXPIRATION_1H,
   },
   verify: {},
 };
 
 const defaultApiTokenConf: APITokenOptions = {
   legacy: true,
+};
+
+// we limit max 1000 request per 15 minutes on user endpoints
+export const defaultUserRateLimiting = {
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1000,
 };
 
 export const defaultSecurity: Security = {
@@ -154,7 +162,6 @@ export function isAESLegacy(security: Security): boolean {
 
 export async function getApiToken(auth: IAuthWebUI, config: Config, remoteUser: RemoteUser, aesPassword: string): Promise<string> {
   const security: Security = getSecurity(config);
-
   if (isAESLegacy(security)) {
     // fallback all goes to AES encryption
     return await new Promise((resolve): void => {

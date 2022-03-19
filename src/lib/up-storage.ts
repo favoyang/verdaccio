@@ -1,16 +1,18 @@
-import zlib from 'zlib';
-import Stream from 'stream';
-import URL, { UrlWithStringQuery } from 'url';
 import JSONStream from 'JSONStream';
 import buildDebug from 'debug';
 import _ from 'lodash';
 import request from 'request';
+import Stream from 'stream';
+import URL, { UrlWithStringQuery } from 'url';
+import zlib from 'zlib';
+
 import { ReadTarball } from '@verdaccio/streams';
-import { Config, Callback, Headers, Logger, Package } from '@verdaccio/types';
+import { Callback, Config, Headers, Logger, Package } from '@verdaccio/types';
+
 import { IProxy, UpLinkConfLocal } from '../../types';
-import { parseInterval, isObject, ErrorCode, buildToken, isObjectOrArray } from './utils';
+import { API_ERROR, CHARACTER_ENCODING, ERROR_CODE, HEADERS, HEADER_TYPE, HTTP_STATUS, TOKEN_BASIC, TOKEN_BEARER } from './constants';
 import { logger } from './logger';
-import { ERROR_CODE, TOKEN_BASIC, TOKEN_BEARER, HEADERS, HTTP_STATUS, API_ERROR, HEADER_TYPE, CHARACTER_ENCODING } from './constants';
+import { ErrorCode, buildToken, isObject, isObjectOrArray, parseInterval } from './utils';
 
 const debug = buildDebug('verdaccio:up-storage');
 
@@ -63,6 +65,7 @@ class ProxyStorage implements IProxy {
   public constructor(config: UpLinkConfLocal, mainConfig: Config) {
     this.config = config;
     this.failed_requests = 0;
+    // @ts-ignore
     this.userAgent = mainConfig.user_agent;
     this.ca = config.ca;
     this.logger = logger;
@@ -278,7 +281,7 @@ class ProxyStorage implements IProxy {
     headers[accept] = headers[accept] || contentTypeAccept;
     headers[acceptEncoding] = headers[acceptEncoding] || 'gzip';
     // registry.npmjs.org will only return search result if user-agent include string 'npm'
-    headers[userAgent] = headers[userAgent] || `npm (${this.userAgent})`;
+    headers[userAgent] = this.userAgent ? `npm (${this.userAgent})` : options.req?.get('user-agent');
 
     return this._setAuth(headers);
   }
@@ -509,7 +512,8 @@ class ProxyStorage implements IProxy {
       uri: options.req.url,
       req: options.req,
       headers: {
-        referer: options.req.headers.referer,
+        // query for search
+        referer: options.req.get('referer'),
       },
     });
 
@@ -570,14 +574,14 @@ class ProxyStorage implements IProxy {
       // FIXME: proxy logic is odd, something is wrong here.
       // @ts-ignore
       if (!this.proxy) {
-        headers['X-Forwarded-For'] = (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'] + ', ' : '') + req.connection.remoteAddress;
+        headers['x-forwarded-for'] = (req.get('x-forwarded-for') ? req.get('x-forwarded-for') + ', ' : '') + req.connection.remoteAddress;
       }
     }
 
     // always attach Via header to avoid loops, even if we're not proxying
-    headers['Via'] = req && req.headers['via'] ? req.headers['via'] + ', ' : '';
+    headers['via'] = req && req.get('via') ? req.get('via') + ', ' : '';
 
-    headers['Via'] += '1.1 ' + this.server_id + ' (Verdaccio)';
+    headers['via'] += '1.1 ' + this.server_id + ' (Verdaccio)';
   }
 
   /**

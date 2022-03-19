@@ -1,16 +1,17 @@
-import fs from 'fs';
-import path from 'path';
-import _ from 'lodash';
 import buildDebug from 'debug';
+import fs from 'fs';
+import _ from 'lodash';
+import path from 'path';
 import validator from 'validator';
 
-import { Config, Package, RemoteUser } from '@verdaccio/types';
 import { VerdaccioError } from '@verdaccio/commons-api';
-import { validateName as utilValidateName, validatePackage as utilValidatePackage, getVersionFromTarball, isObject, ErrorCode } from '../lib/utils';
-import { API_ERROR, HEADER_TYPE, HEADERS, HTTP_STATUS, TOKEN_BASIC, TOKEN_BEARER } from '../lib/constants';
+import { Config, Package, RemoteUser } from '@verdaccio/types';
+
+import { $NextFunctionVer, $RequestExtend, $ResponseExtend, IAuth } from '../../types';
+import { API_ERROR, HEADERS, HEADER_TYPE, HTTP_STATUS, TOKEN_BASIC, TOKEN_BEARER } from '../lib/constants';
 import { stringToMD5 } from '../lib/crypto-utils';
-import { $ResponseExtend, $RequestExtend, $NextFunctionVer, IAuth } from '../../types';
 import { logger } from '../lib/logger';
+import { ErrorCode, getVersionFromTarball, isObject, validateName as utilValidateName, validatePackage as utilValidatePackage } from '../lib/utils';
 
 const debug = buildDebug('verdaccio');
 
@@ -110,7 +111,7 @@ export function validatePackage(req: $RequestExtend, res: $ResponseExtend, next:
 export function media(expect: string | null): any {
   return function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
     if (req.headers[HEADER_TYPE.CONTENT_TYPE] !== expect) {
-      next(ErrorCode.getCode(HTTP_STATUS.UNSUPPORTED_MEDIA, 'wrong content-type, expect: ' + expect + ', got: ' + req.headers[HEADER_TYPE.CONTENT_TYPE]));
+      next(ErrorCode.getCode(HTTP_STATUS.UNSUPPORTED_MEDIA, 'wrong content-type, expect: ' + expect + ', got: ' + req.get(HEADER_TYPE.CONTENT_TYPE)));
     } else {
       next();
     }
@@ -134,7 +135,7 @@ export function expectJson(req: $RequestExtend, res: $ResponseExtend, next: $Nex
 
 export function antiLoop(config: Config): Function {
   return function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
-    if (req.headers.via != null) {
+    if (req?.headers?.via != null) {
       const arr = req.headers.via.split(',');
 
       for (let i = 0; i < arr.length; i++) {
@@ -153,7 +154,12 @@ export function allow(auth: IAuth): Function {
     return function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
       req.pause();
       const packageName = req.params.scope ? `@${req.params.scope}/${req.params.package}` : req.params.package;
-      const packageVersion = req.params.filename ? getVersionFromTarball(req.params.filename) : undefined;
+      let packageVersion: string | undefined = undefined;
+      if (req.params.filename) {
+        packageVersion = getVersionFromTarball(req.params.filename) || undefined;
+      } else if (typeof req.body.versions === 'object') {
+        packageVersion = Object.keys(req.body.versions)[0];
+      }
       const remote: RemoteUser = req.remote_user;
       debug('[middleware/allow][%o] allow for %o', action, remote?.name);
       auth['allow_' + action]({ packageName, packageVersion }, remote, function (error, allowed): void {
@@ -232,7 +238,7 @@ export function log(config: Config) {
       req.headers.authorization = '<Classified>';
     }
 
-    const _cookie = req.headers.cookie;
+    const _cookie = req.get('cookie');
     if (_.isNil(_cookie) === false) {
       req.headers.cookie = '<Classified>';
     }
@@ -277,7 +283,7 @@ export function log(config: Config) {
       }
       logHasBeenCalled = true;
 
-      const forwardedFor = req.headers['x-forwarded-for'];
+      const forwardedFor = req.get('x-forwarded-for');
       const remoteAddress = req.connection.remoteAddress;
       const remoteIP = forwardedFor ? `${forwardedFor} via ${remoteAddress}` : remoteAddress;
       let message;

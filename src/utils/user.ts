@@ -1,5 +1,6 @@
 // @flow
 import _ from 'lodash';
+
 import { stringToMD5 } from '../lib/crypto-utils';
 
 // this is a generic avatar

@@ -1,25 +1,24 @@
-import fs from 'fs';
 import assert from 'assert';
-import DefaultURL, { URL } from 'url';
-import _ from 'lodash';
 import buildDebug from 'debug';
-import semver from 'semver';
-import YAML from 'js-yaml';
-import validator from 'validator';
-import memoizee from 'memoizee';
-import sanitizyReadme from '@verdaccio/readme';
-
-import { Package, Version, Author } from '@verdaccio/types';
 import { Request } from 'express';
+import fs from 'fs';
+import YAML from 'js-yaml';
+import _ from 'lodash';
+import memoizee from 'memoizee';
+import semver from 'semver';
+import DefaultURL, { URL } from 'url';
+import validator from 'validator';
+
 // eslint-disable-next-line max-len
-import { getConflict, getBadData, getBadRequest, getInternalError, getUnauthorized, getForbidden, getServiceUnavailable, getNotFound, getCode } from '@verdaccio/commons-api';
-import { generateGravatarUrl, GENERIC_AVATAR } from '../utils/user';
-import { StringValue, AuthorAvatar } from '../../types';
-import { APP_ERROR, DEFAULT_PORT, DEFAULT_DOMAIN, DEFAULT_PROTOCOL, HEADERS, DIST_TAGS, DEFAULT_USER } from './constants';
+import { getBadData, getBadRequest, getCode, getConflict, getForbidden, getInternalError, getNotFound, getServiceUnavailable, getUnauthorized } from '@verdaccio/commons-api';
+import sanitizyReadme from '@verdaccio/readme';
+import { Author, Config, Package, Version } from '@verdaccio/types';
 
-import { normalizeContributors } from './storage-utils';
-
+import { AuthorAvatar, StringValue } from '../../types';
+import { GENERIC_AVATAR, generateGravatarUrl } from '../utils/user';
+import { APP_ERROR, DEFAULT_DOMAIN, DEFAULT_PORT, DEFAULT_PROTOCOL, DEFAULT_USER, DIST_TAGS, HEADERS } from './constants';
 import { logger } from './logger';
+import { normalizeContributors } from './storage-utils';
 
 const debug = buildDebug('verdaccio');
 
@@ -30,9 +29,17 @@ const pkgVersion = module.exports.version;
 const pkgName = module.exports.name;
 const validProtocols = ['https', 'http'];
 
-export function getUserAgent(): string {
+export function getUserAgent(customUserAgent?: boolean | string): string {
   assert(_.isString(pkgName));
   assert(_.isString(pkgVersion));
+  if (customUserAgent === true) {
+    return `${pkgName}/${pkgVersion}`;
+  } else if (_.isString(customUserAgent) && _.isEmpty(customUserAgent) === false) {
+    return customUserAgent;
+  } else if (customUserAgent === false) {
+    return '';
+  }
+
   return `${pkgName}/${pkgVersion}`;
 }
 
@@ -156,7 +163,7 @@ const memoizedgetPublicUrl = memoizee(getPublicUrl);
  * @return {String} a parsed url
  */
 export function getLocalRegistryTarballUri(uri: string, pkgName: string, req: Request, urlPrefix: string | void): string {
-  const currentHost = req.headers.host;
+  const currentHost = req.get('host');
 
   if (!currentHost) {
     return uri;
@@ -457,21 +464,19 @@ export function addGravatarSupport(pkgInfo: Package, online = true): AuthorAvata
 
   // for contributors
   if (_.isEmpty(contributors) === false) {
-    pkgInfoCopy.latest.contributors = contributors.map(
-      (contributor): AuthorAvatar => {
-        if (isObject(contributor)) {
-          contributor.avatar = generateGravatarUrl(contributor.email, online);
-        } else if (_.isString(contributor)) {
-          contributor = {
-            avatar: GENERIC_AVATAR,
-            email: contributor,
-            name: contributor,
-          };
-        }
-
-        return contributor;
+    pkgInfoCopy.latest.contributors = contributors.map((contributor): AuthorAvatar => {
+      if (isObject(contributor)) {
+        contributor.avatar = generateGravatarUrl(contributor.email, online);
+      } else if (_.isString(contributor)) {
+        contributor = {
+          avatar: GENERIC_AVATAR,
+          email: contributor,
+          name: contributor,
+        };
       }
-    );
+
+      return contributor;
+    });
   }
 
   // for maintainers
@@ -489,11 +494,12 @@ export function addGravatarSupport(pkgInfo: Package, online = true): AuthorAvata
  * parse package readme - markdown/ascii
  * @param {String} packageName name of package
  * @param {String} readme package readme
+ * @param {Object} options sanitizyReadme options
  * @return {String} converted html template
  */
-export function parseReadme(packageName: string, readme: string): string | void {
+export function parseReadme(packageName: string, readme: string, options: { pathname?: string | void } = {}): string | void {
   if (_.isEmpty(readme) === false) {
-    return sanitizyReadme(readme);
+    return sanitizyReadme(readme, options);
   }
 
   // logs readme not found error
@@ -646,7 +652,7 @@ export function getPublicUrl(url_prefix: string = '', req): string {
       throw new Error('invalid host');
     }
     const protoHeader = process.env.VERDACCIO_FORWARDED_PROTO ?? HEADERS.FORWARDED_PROTO;
-    const protocol = getWebProtocol(req.get(protoHeader), req.protocol);
+    const protocol = getWebProtocol(req.get(protoHeader.toLowerCase()), req.protocol);
     const combinedUrl = combineBaseUrl(protocol, host, url_prefix);
     debug('public url by request %o', combinedUrl);
     return combinedUrl;
@@ -682,4 +688,10 @@ export function wrapPrefix(prefix: string | void): string {
   } else {
     return prefix;
   }
+}
+
+export function hasLogin(config: Config) {
+  // FIXME: types are not yet on the library verdaccio/monorepo
+  // @ts-ignore
+  return _.isNil(config?.web?.login) || config?.web?.login === true;
 }

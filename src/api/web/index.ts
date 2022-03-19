@@ -1,15 +1,16 @@
-import fs from 'fs';
-import path from 'path';
-import _ from 'lodash';
-
-import express from 'express';
 import buildDebug from 'debug';
+import express from 'express';
+import fs from 'fs';
+import _ from 'lodash';
+import path from 'path';
 
-import Search from '../../lib/search';
+import { Config } from '@verdaccio/types';
+
 import { HTTP_STATUS } from '../../lib/constants';
-import loadPlugin from '../../lib/plugin-loader';
-import { isHTTPProtocol } from '../../lib/utils';
 import { logger } from '../../lib/logger';
+import loadPlugin from '../../lib/plugin-loader';
+import Search from '../../lib/search';
+import { isHTTPProtocol } from '../../lib/utils';
 import renderHTML from './html/renderHTML';
 
 const { setSecurityWebHeaders } = require('../middleware');
@@ -53,13 +54,15 @@ const sendFileCallback = (next) => (err) => {
   }
 };
 
-export default function (config, auth, storage) {
+export default function (config: Config, auth, storage) {
   let { staticPath, manifest, manifestFiles } = loadTheme(config) || require('@verdaccio/ui-theme')();
   debug('static path %o', staticPath);
   Search.configureStorage(storage);
 
   /* eslint new-cap:off */
   const router = express.Router();
+  // run in production mode by default, just in case
+  // it shouldn't make any difference anyway
   router.use(auth.webUIJWTmiddleware());
   router.use(setSecurityWebHeaders);
 
@@ -82,6 +85,7 @@ export default function (config, auth, storage) {
         // Use POSIX version `path.posix.join` instead.
         config.web.logo = path.posix.join('/-/static/', path.basename(config.web.logo));
         router.get(config.web.logo, function (_req, res, next) {
+          // @ts-ignore
           debug('serve custom logo  web:%s - local:%s', config.web.logo, absoluteLocalFile);
           res.sendFile(absoluteLocalFile, sendFileCallback(next));
         });

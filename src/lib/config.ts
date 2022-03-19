@@ -1,17 +1,14 @@
 import assert from 'assert';
 import _ from 'lodash';
 
-import { PackageList, Config as AppConfig, Security, Logger } from '@verdaccio/types';
+import { Config as AppConfig, Logger, PackageList, RateLimit, Security } from '@verdaccio/types';
+
 import { MatchedPackage, StartUpConfig } from '../../types';
-import { generateRandomHexString } from './crypto-utils';
-import {
-  getMatchedPackagesSpec,
-  normalisePackageAccess,
-  sanityCheckUplinksProps,
-  uplinkSanityCheck
-} from './config-utils';
-import { getUserAgent, isObject } from './utils';
+import { defaultUserRateLimiting } from './auth-utils';
+import { getMatchedPackagesSpec, normalisePackageAccess, sanityCheckUplinksProps, uplinkSanityCheck } from './config-utils';
 import { APP_ERROR } from './constants';
+import { generateRandomHexString } from './crypto-utils';
+import { getUserAgent, isObject } from './utils';
 
 const LoggerApi = require('./logger');
 const strategicConfigProps = ['uplinks', 'packages'];
@@ -22,12 +19,14 @@ const allowedEnvConfig = ['http_proxy', 'https_proxy', 'no_proxy'];
  */
 class Config implements AppConfig {
   public logger: Logger;
-  public user_agent: string;
+  // @ts-ignore
+  public user_agent: boolean | string;
   // @ts-ignore
   public secret: string;
   public uplinks: any;
   public packages: PackageList;
   public users: any;
+  public userRateLimit: RateLimit;
   public server_id: string;
   public self_path: string;
   public storage: string | void;
@@ -39,7 +38,7 @@ class Config implements AppConfig {
     const self = this;
     this.logger = LoggerApi.logger;
     this.self_path = config.self_path;
-    this.storage = config.storage;
+    this.storage = process.env.VERDACCIO_STORAGE_PATH || config.storage;
     this.plugins = config.plugins;
 
     for (const configProp in config) {
@@ -48,10 +47,11 @@ class Config implements AppConfig {
       }
     }
 
-    // @ts-ignore
-    if (_.isNil(this.user_agent)) {
-      this.user_agent = getUserAgent();
+    if (config?.user_agent) {
+      this.user_agent = getUserAgent(config?.user_agent);
     }
+
+    this.userRateLimit = { ...defaultUserRateLimiting, ...config?.userRateLimit };
 
     // some weird shell scripts are valid yaml files parsed as string
     assert(_.isObject(config), APP_ERROR.CONFIG_NOT_VALID);

@@ -1,23 +1,25 @@
-import _ from 'lodash';
 import { Router } from 'express';
+import _ from 'lodash';
+
 import { Config, Package } from '@verdaccio/types';
+
+import { $NextFunctionVer, $RequestExtend, $ResponseExtend, $SidebarPackage, IAuth, IStorageHandler } from '../../../../types';
+import { DIST_TAGS, HEADERS, HEADER_TYPE, HTTP_STATUS } from '../../../lib/constants';
+import { logger } from '../../../lib/logger';
 import {
-  addScope,
+  ErrorCode,
   addGravatarSupport,
-  deleteProperties,
-  sortByName,
-  parseReadme,
-  formatAuthor,
+  addScope,
   convertDistRemoteToLocalTarballUrls,
+  deleteProperties,
+  formatAuthor,
   getLocalRegistryTarballUri,
   isVersionValid,
-  ErrorCode,
+  parseReadme,
+  sortByName,
 } from '../../../lib/utils';
-import { allow } from '../../middleware';
-import { DIST_TAGS, HEADER_TYPE, HEADERS, HTTP_STATUS } from '../../../lib/constants';
 import { generateGravatarUrl } from '../../../utils/user';
-import { logger } from '../../../lib/logger';
-import { IAuth, $ResponseExtend, $RequestExtend, $NextFunctionVer, IStorageHandler, $SidebarPackage } from '../../../../types';
+import { allow } from '../../middleware';
 
 const getOrder = (order = 'asc') => {
   return order === 'asc';
@@ -25,8 +27,9 @@ const getOrder = (order = 'asc') => {
 
 export type PackcageExt = Package & { author: any; dist?: { tarball: string } };
 
-function addPackageWebApi(route: Router, storage: IStorageHandler, auth: IAuth, config: Config): void {
+function addPackageWebApi(storage: IStorageHandler, auth: IAuth, config: Config): Router {
   const can = allow(auth);
+  const pkgRouter = Router(); /* eslint new-cap: 0 */
 
   const checkAllow = (name, remoteUser): Promise<boolean> =>
     new Promise((resolve, reject): void => {
@@ -43,7 +46,7 @@ function addPackageWebApi(route: Router, storage: IStorageHandler, auth: IAuth, 
     });
 
   // Get list of all visible package
-  route.get('/packages', function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
+  pkgRouter.get('/packages', function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
     storage.getLocalDatabase(async function (err, packages): Promise<void> {
       if (err) {
         throw err;
@@ -87,7 +90,7 @@ function addPackageWebApi(route: Router, storage: IStorageHandler, auth: IAuth, 
   });
 
   // Get package readme
-  route.get('/package/readme/(@:scope/)?:package/:version?', can('access'), function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
+  pkgRouter.get('/package/readme/(@:scope/)?:package/:version?', can('access'), function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
     const packageName = req.params.scope ? addScope(req.params.scope, req.params.package) : req.params.package;
 
     storage.getPackage({
@@ -100,12 +103,14 @@ function addPackageWebApi(route: Router, storage: IStorageHandler, auth: IAuth, 
         }
 
         res.set(HEADER_TYPE.CONTENT_TYPE, HEADERS.TEXT_PLAIN);
-        next(parseReadme(info.name, info.readme));
+        const referer = req.get('Referer');
+        const pathname = referer ? new URL(referer).pathname : undefined;
+        next(parseReadme(info.name, info.readme, { pathname }));
       },
     });
   });
 
-  route.get('/sidebar/(@:scope/)?:package', can('access'), function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
+  pkgRouter.get('/sidebar/(@:scope/)?:package', can('access'), function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
     const packageName: string = req.params.scope ? addScope(req.params.scope, req.params.package) : req.params.package;
 
     storage.getPackage({
@@ -146,6 +151,8 @@ function addPackageWebApi(route: Router, storage: IStorageHandler, auth: IAuth, 
       },
     });
   });
+
+  return pkgRouter;
 }
 
 export default addPackageWebApi;
