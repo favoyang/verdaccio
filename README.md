@@ -24,24 +24,90 @@ Google Cloud Storage** or create your own plugin.
 
 [![Twitter followers](https://img.shields.io/twitter/follow/verdaccio_npm.svg?style=social&label=Follow)](https://twitter.com/verdaccio_npm)
 [![Github](https://img.shields.io/github/stars/verdaccio/verdaccio.svg?style=social&label=Stars)](https://github.com/verdaccio/verdaccio/stargazers)
+[![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 ## Install
 
 Install with npm:
 
 ```bash
-npm install --global verdaccio
+npm install --location=global verdaccio
 ```
 
-> Node.js v12 is required for Verdaccio 5
+> Node.js v12 or higher is required for Verdaccio 5
 
-Are you still using **Verdaccio 4**?. Check the [migration guide](https://verdaccio.org/blog/2021/04/14/verdaccio-5-migration-guide).
+or pull [Docker official image](https://verdaccio.org/docs/docker)
+
+```bash
+docker pull verdaccio/verdaccio
+```
+
+and run
+
+```bash
+docker run -it --rm --name verdaccio -p 4873:4873 verdaccio/verdaccio
+```
+
+or with _helm_ [official chart](https://github.com/verdaccio/charts).
+
+```bash
+helm repo add verdaccio https://charts.verdaccio.org
+helm repo update
+helm install verdaccio/verdaccio
+```
+
+Are you still using **Verdaccio 4**?. Check the [migration guide from 4.x to 5.x](https://verdaccio.org/blog/2021/04/14/verdaccio-5-migration-guide).
+
+## Programmatic API
+
+Verdaccio can be used as a module for launch a server programmatically, [you can find more info at the website](https://verdaccio.org/docs/verdaccio-programmatically#using-the-module-api).
+
+```
+ const {runServer} = require('verdaccio');
+ const app = await runServer(); // default configuration
+ const app = await runServer('./config/config.yaml');
+ const app = await runServer({ configuration });
+ app.listen(4873, (event) => {
+   // do something
+ });
+```
+
+## Verdaccio 6 next
+
+[Verdaccio 6 is on the way](https://github.com/verdaccio/verdaccio/discussions/2970), meanwhile is ready you can start testing (not for production) the new release with:
+
+> Latest Node.js v16 required
+
+Install with npm:
+
+```bash
+npm install --location=global verdaccio@6-next
+```
+
+or
+
+```bash
+docker pull verdaccio/verdaccio:nightly-master
+```
+
+The migration notes can be find [here](https://github.com/verdaccio/verdaccio/blob/master/docs/migration-v5-to-v6.md).
+
+## Plugins
+
+You can develop your own [plugins](https://verdaccio.org/docs/plugins) with the [verdaccio generator](https://github.com/verdaccio/generator-verdaccio-plugin). Installing [Yeoman](https://yeoman.io/) is required.
+
+```
+npm install --location=global yo
+npm install --location=global generator-verdaccio-plugin
+```
+
+Learn more [here](https://verdaccio.org/docs/dev-plugins) how to develop plugins. Share your plugins with the community.
 
 ## Donations
 
-Verdaccio is run by **volunteers**; nobody is working full-time on it. If you find this project to be useful and would like to support its development, consider making a donation - **your logo might end up in this readme.** 😉
+Verdaccio is run by **volunteers**; nobody is working full-time on it. If you find this project to be useful and would like to support its development and maintenance.
 
-**[Donate](https://github.com/sponsors/verdaccio)** 💵👍🏻 starting from _$1/month_ or just one single contribution.
+You can donate **[GitHub Sponsors](https://github.com/sponsors/verdaccio)** or **[Open Collective](https://opencollective.com/verdaccio)** 💵👍🏻 starting from _$1/month_ or just one single contribution.
 
 ## What does Verdaccio do for me?
 
@@ -65,24 +131,21 @@ If you want to use a modified version of some 3rd-party package (for example, yo
 ### E2E Testing
 
 Verdaccio has proved to be a lightweight registry that can be
-booted in a couple of seconds, fast enough for any CI. Many open source projects use verdaccio for end to end testing, to mention some examples, **create-react-app**, **mozilla neutrino**, **pnpm**, **storybook**, **alfresco** or **eclipse theia**. You can read more in dedicated article to E2E in our blog.
+booted in a couple of seconds, fast enough for any CI. Many open source projects use verdaccio for end to end testing, to mention some examples, **create-react-app**, **mozilla neutrino**, **pnpm**, **storybook**, **babel.js**, **angular-cli** or **docusaurus**. You can read more in [here](https://verdaccio.org/docs/e2e).
+
+Furthermore, here few examples how to start:
+
+- [e2e-ci-example-gh-actions](https://github.com/juanpicado/e2e-ci-example-gh-actions)
+- [verdaccio-end-to-end-tests](https://github.com/juanpicado/verdaccio-end-to-end-tests)
+- [verdaccio-fork](https://github.com/juanpicado/verdaccio-fork)
 
 ## Talks
 
-### **Using Docker and Verdaccio to make Integration Testing Easy - Docker All Hands #4 December - 2021**.
+- [**NodeTLV 20222** - Deep dive into Verdaccio, a lightweight Node.js registry - **Juan Picado**](https://portal.gitnation.org/contents/five-ways-of-taking-advantage-of-verdaccio-your-private-and-proxy-nodejs-registry)
+- [Five Ways of Taking Advantage of Verdaccio, Your Private and Proxy Node.js Registry **Node Congress 2022** - **Juan Picado**](https://portal.gitnation.org/contents/five-ways-of-taking-advantage-of-verdaccio-your-private-and-proxy-nodejs-registry)
+- [Using Docker and Verdaccio to make Integration Testing Easy - **Docker All Hands #4 December - 2021** - **Juan Picado**](https://www.youtube.com/watch?v=zRI0skF1f8I)
 
-[![docker](https://cdn.verdaccio.dev/readme/docker-all-hands-jpicado-talk.jpg)](https://www.youtube.com/watch?v=zRI0skF1f8I)
-
-You might want to check out as well our previous talks:
-
-- [**Juan Picado** – Testing the integrity of React components by publishing in a private registry](https://www.youtube.com/watch?v=bRKZbrlQqLY&t=16s&ab_channel=ReactFinland)
-- [BeerJS Cba Meetup No. 53 May 2021 - **Juan Picado** React Finland - 2021](https://www.youtube.com/watch?v=6SyjqBmS49Y&ab_channel=BeerJSCba)
-- [Node.js Dependency Confusion Attacks - April 2021 - **Juan Picado**](https://www.youtube.com/watch?v=qTRADSp3Hpo)
-- [**OpenJS World 2020** about \*Cover your Projects with a Multi purpose Lightweight Node.js Registry - **Juan Picado**](https://www.youtube.com/watch?v=oVCjDWeehAQ)
-- [ViennaJS Meetup - Introduction to Verdaccio by **Priscila Olivera** and **Juan Picado**](https://www.youtube.com/watch?v=hDIFKzmoCa)
-- [Open Source? trivago - Verdaccio (**Ayush** and **Juan Picado**) January 2020](https://www.youtube.com/watch?v=A5CWxJC9xzc)
-- [GitNation Open Source Stage - How we have built a Node.js Registry with React - **Juan Picado** December 2019](https://www.youtube.com/watch?v=gpjC8Qp9B9A)
-- [Verdaccio - A lightweight Private Proxy Registry built in Node.js | **Juan Picado** at The Destro Dev Show](https://www.youtube.com/watch?reload=9&v=P_hxy7W-IL4&ab_channel=TheDestroDevShow)
+[View more in the YouTube channel](https://www.youtube.com/channel/UC5i20v6o7lSjXzAHOvatt0w).
 
 ## Get Started
 
@@ -191,38 +254,38 @@ Verdaccio aims to support all features of a standard npm client that make sense 
 
 If you want to report a security vulnerability, please follow the steps which we have defined for you in our [security policy](https://github.com/verdaccio/verdaccio/security/policy).
 
-## Core Team
+## Contributors
 
-| [Juan Picado](https://github.com/juanpicado)                                   | [Ayush Sharma](https://github.com/ayusharma)                             | [Sergio Hg](https://github.com/sergiohgz)                                 |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| ![jotadeveloper](https://avatars3.githubusercontent.com/u/558752?s=120&v=4)    | ![ayusharma](https://avatars2.githubusercontent.com/u/6918450?s=120&v=4) | ![sergiohgz](https://avatars2.githubusercontent.com/u/14012309?s=120&v=4) |
-| [@jotadeveloper](https://twitter.com/jotadeveloper)                            | [@ayusharma\_](https://twitter.com/ayusharma_)                           | [@sergiohgz](https://twitter.com/sergiohgz)                               |
-| [Priscila Oliveria](https://github.com/priscilawebdev)                         | [Daniel Ruf](https://github.com/DanielRuf)                               |
-| ![priscilawebdev](https://avatars2.githubusercontent.com/u/29228205?s=120&v=4) | ![DanielRuf](https://avatars3.githubusercontent.com/u/827205?s=120&v=4)  |
-| [@priscilawebdev](https://twitter.com/priscilawebdev)                          | [@DanielRufde](https://twitter.com/DanielRufde)                          |
+| [Juan Picado](https://github.com/juanpicado)                                  | [Ayush Sharma](https://github.com/ayusharma)                            | [Sergio Hg](https://github.com/sergiohgz)                                |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| ![jotadeveloper](https://avatars3.githubusercontent.com/u/558752?s=80&v=4)    | ![ayusharma](https://avatars2.githubusercontent.com/u/6918450?s=80&v=4) | ![sergiohgz](https://avatars2.githubusercontent.com/u/14012309?s=80&v=4) |
+| [@jotadeveloper](https://twitter.com/jotadeveloper)                           | [@ayusharma\_](https://twitter.com/ayusharma_)                          | [@sergiohgz](https://twitter.com/sergiohgz)                              |
+| [Priscila Oliveria](https://github.com/priscilawebdev)                        | [Daniel Ruf](https://github.com/DanielRuf)                              |
+| ![priscilawebdev](https://avatars2.githubusercontent.com/u/29228205?s=80&v=4) | ![DanielRuf](https://avatars3.githubusercontent.com/u/827205?s=80&v=4)  |
+| [@priscilawebdev](https://twitter.com/priscilawebdev)                         | [@DanielRufde](https://twitter.com/DanielRufde)                         |
 
-You can find and chat with then over Discord, click [here](http://chat.verdaccio.org) or follow them at _Twitter_.
+[See the full list of contributors is at the website.](https://verdaccio.org/contributors)
 
 ## Who is using Verdaccio?
 
-- [create-react-app](https://github.com/facebook/create-react-app/blob/master/CONTRIBUTING.md#customizing-e2e-registry-configuration) _(+86.2k ⭐️)_
-- [Gatsby](https://github.com/gatsbyjs/gatsby) _(+49.2k ⭐️)_
-- [Babel.js](https://github.com/babel/babel) _(+38.5k ⭐️)_
-- [Vue CLI](https://github.com/vuejs/vue-cli) _(+27.4k ⭐️)_
-- [Angular CLI](https://github.com/angular/angular-cli) _(+24.3k ⭐️)_
-- [Uppy](https://github.com/transloadit/uppy) _(+23.8k ⭐️)_
-- [bit](https://github.com/teambit/bit) _(+13k ⭐️)_
+- [create-react-app](https://github.com/facebook/create-react-app/blob/master/CONTRIBUTING.md#customizing-e2e-registry-configuration) _(+96.2k ⭐️)_
+- [Gatsby](https://github.com/gatsbyjs/gatsby) _(+53.5k ⭐️)_
+- [Babel.js](https://github.com/babel/babel) _(+41.3k ⭐️)_
+- [Docusaurus](https://github.com/facebook/docusaurus) _(+37k ⭐️)_
+- [Vue CLI](https://github.com/vuejs/vue-cli) _(+29.4k ⭐️)_
+- [Angular CLI](https://github.com/angular/angular-cli) _(+25.6k ⭐️)_
+- [Uppy](https://github.com/transloadit/uppy) _(+25.8k ⭐️)_
+- [pnpm](https://github.com/pnpm/pnpm) _(+19.2k ⭐️)_
+- [bit](https://github.com/teambit/bit) _(+15k ⭐️)_
+- [NX](https://github.com/nrwl/nx) _(+14.1k ⭐️)_
 - [Aurelia Framework](https://github.com/aurelia/framework) _(+11.6k ⭐️)_
-- [pnpm](https://github.com/pnpm/pnpm) _(+10.1k ⭐️)_
 - [ethereum/web3.js](https://github.com/ethereum/web3.js) _(+9.8k ⭐️)_
-- [NX](https://github.com/nrwl/nx) _(+6.1k ⭐️)_
-- [webiny-js](https://github.com/webiny/webiny-js) _(+4.3k ⭐️)_
-- [Mozilla Neutrino](https://github.com/neutrinojs/neutrino) _(+3.7k ⭐️)_
+- [webiny-js](https://github.com/webiny/webiny-js) _(+5.9k ⭐️)_
 - [workshopper how to npm](https://github.com/workshopper/how-to-npm) _(+1k ⭐️)_
 - [Amazon SDK v3](https://github.com/aws/aws-sdk-js-v3)
 - [Amazon Encryption SDK for Javascript](https://github.com/aws/aws-encryption-sdk-javascript)
 
-🤓 Don't be shy, you also can be in [the list](https://github.com/verdaccio/website/blob/master/docs/who-is-using.md).
+🤓 Don't be shy, add yourself to this readme.
 
 ## Open Collective Sponsors
 
@@ -269,7 +332,7 @@ If you have any issue you can try the following options, do no desist to ask or 
 - [Donations](https://github.com/sponsors/verdaccio)
 - [Reporting an issue](https://github.com/verdaccio/verdaccio/issues/new/choose)
 - [Running discussions](https://github.com/verdaccio/verdaccio/issues?q=is%3Aissue+is%3Aopen+label%3Adiscuss)
-- [Chat](http://chat.verdaccio.org/)
+- [Chat](https://discord.gg/7qWJxBf)
 - [Logos](https://verdaccio.org/docs/en/logo)
 - [Docker Examples](https://github.com/verdaccio/verdaccio/tree/master/docker-examples)
 - [FAQ](https://github.com/verdaccio/verdaccio/discussions/categories/q-a)

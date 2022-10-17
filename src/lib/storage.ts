@@ -5,8 +5,8 @@ import Stream from 'stream';
 
 import { VerdaccioError } from '@verdaccio/commons-api';
 import { ReadTarball } from '@verdaccio/streams';
-import { GenericBody, Token, TokenFilter } from '@verdaccio/types';
 import { Callback, Config, DistFile, IReadTarball, IUploadTarball, Logger, MergeTags, Package, Version, Versions } from '@verdaccio/types';
+import { GenericBody, Token, TokenFilter } from '@verdaccio/types';
 
 import { IGetPackageOptions, IPluginFilters, IProxy, IStorage, IStorageHandler, ISyncUplinks, ProxyList, StringValue } from '../../types';
 import { logger } from '../lib/logger';
@@ -15,7 +15,15 @@ import { API_ERROR, DIST_TAGS, HTTP_STATUS } from './constants';
 import LocalStorage from './local-storage';
 import { mergeVersions } from './metadata-utils';
 import Search from './search';
-import { checkPackageLocal, checkPackageRemote, cleanUpLinksRef, generatePackageTemplate, mergeUplinkTimeIntoLocal, publishPackage } from './storage-utils';
+import {
+  checkPackageLocal,
+  checkPackageRemote,
+  cleanUpLinksRef,
+  convertAbbreviatedManifest,
+  generatePackageTemplate,
+  mergeUplinkTimeIntoLocal,
+  publishPackage,
+} from './storage-utils';
 import ProxyStorage from './up-storage';
 import { setupUpLinks, updateVersionsHiddenUpLink } from './uplink-util';
 import { ErrorCode, isObject, normalizeDistTags, validateMetadata } from './utils';
@@ -323,8 +331,11 @@ class Storage implements IStorageHandler {
 
           // npm can throw if this field doesn't exist
           result._attachments = {};
-
-          options.callback(null, result, uplinkErrors);
+          if (options.abbreviated === true) {
+            options.callback(null, convertAbbreviatedManifest(result), uplinkErrors);
+          } else {
+            options.callback(null, result, uplinkErrors);
+          }
         }
       );
     });

@@ -6,6 +6,7 @@ import { Config, Package } from '@verdaccio/types';
 import { $NextFunctionVer, $RequestExtend, $ResponseExtend, IAuth, IStorageHandler } from '../../../../types';
 import { API_ERROR, DIST_TAGS, HEADERS } from '../../../lib/constants';
 import { ErrorCode, convertDistRemoteToLocalTarballUrls, getVersion } from '../../../lib/utils';
+import { getByQualityPriorityValue } from '../../../utils/string';
 import { allow } from '../../middleware';
 
 const downloadStream = (packageName: string, filename: string, storage: any, req: $RequestExtend, res: $ResponseExtend): void => {
@@ -45,6 +46,7 @@ export default function (route: Router, auth: IAuth, storage: IStorageHandler, c
   const can = allow(auth);
   // TODO: anonymous user?
   route.get('/:package/:version?', can('access'), function (req: $RequestExtend, res: $ResponseExtend, next: $NextFunctionVer): void {
+    const abbreviated = getByQualityPriorityValue(req.get('Accept')) === 'application/vnd.npm.install-v1+json';
     const getPackageMetaCallback = function (err, metadata: Package): void {
       if (err) {
         return next(err);
@@ -53,11 +55,18 @@ export default function (route: Router, auth: IAuth, storage: IStorageHandler, c
 
       let queryVersion = req.params.version;
       if (_.isNil(queryVersion)) {
+        if (abbreviated) {
+          res.setHeader(HEADERS.CONTENT_TYPE, 'application/vnd.npm.install-v1+json');
+        } else {
+          res.setHeader(HEADERS.CONTENT_TYPE, HEADERS.JSON);
+        }
+
         return next(metadata);
       }
 
       let version = getVersion(metadata, queryVersion);
       if (_.isNil(version) === false) {
+        res.setHeader(HEADERS.CONTENT_TYPE, HEADERS.JSON);
         return next(version);
       }
 
@@ -66,6 +75,7 @@ export default function (route: Router, auth: IAuth, storage: IStorageHandler, c
           queryVersion = metadata[DIST_TAGS][queryVersion];
           version = getVersion(metadata, queryVersion);
           if (_.isNil(version) === false) {
+            res.setHeader(HEADERS.CONTENT_TYPE, HEADERS.JSON);
             return next(version);
           }
         }
@@ -77,6 +87,7 @@ export default function (route: Router, auth: IAuth, storage: IStorageHandler, c
       name: req.params.package,
       uplinksLook: true,
       req,
+      abbreviated,
       callback: getPackageMetaCallback,
     });
   });

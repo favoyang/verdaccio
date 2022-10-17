@@ -11,7 +11,7 @@ import renderTemplate from './template';
 
 const pkgJSON = require('../../../../package.json');
 const DEFAULT_LANGUAGE = 'es-US';
-const cache = new LRU({ max: 500, maxAge: 1000 * 60 * 60 });
+const cache = new LRU({ max: 500, ttl: 1000 * 60 * 60 });
 
 const debug = buildDebug('verdaccio');
 
@@ -47,6 +47,7 @@ export default function renderHTML(config, manifest, manifestFiles, req, res) {
   const base = getPublicUrl(config?.url_prefix, req);
   const basename = new URL(base).pathname;
   const language = config?.i18n?.web ?? DEFAULT_LANGUAGE;
+  const needHtmlCache = [undefined, null].includes(config?.web?.html_cache) ? true : config.web.html_cache;
   const darkMode = config?.web?.darkMode ?? false;
   const title = config?.web?.title ?? WEB_TITLE;
   const scope = config?.web?.scope ?? '';
@@ -55,7 +56,7 @@ export default function renderHTML(config, manifest, manifestFiles, req, res) {
   const pkgManagers = config?.web?.pkgManagers ?? ['yarn', 'pnpm', 'npm'];
   const version = pkgJSON.version;
   const primaryColor = validatePrimaryColor(config?.web?.primary_color) ?? '#4b5e40';
-  const { scriptsBodyAfter, metaScripts, scriptsbodyBefore } = Object.assign(
+  const { scriptsBodyAfter, metaScripts, scriptsbodyBefore, showInfo, showSettings, showThemeSwitch, showFooter, showSearch, showDownloadTarball } = Object.assign(
     {},
     {
       scriptsBodyAfter: [],
@@ -65,6 +66,12 @@ export default function renderHTML(config, manifest, manifestFiles, req, res) {
     config?.web
   );
   const options = {
+    showInfo,
+    showSettings,
+    showThemeSwitch,
+    showFooter,
+    showSearch,
+    showDownloadTarball,
     darkMode,
     url_prefix,
     basename,
@@ -83,7 +90,6 @@ export default function renderHTML(config, manifest, manifestFiles, req, res) {
 
   try {
     webPage = cache.get('template');
-
     if (!webPage) {
       debug('web options %o', options);
       debug('web manifestFiles %o', manifestFiles);
@@ -98,8 +104,10 @@ export default function renderHTML(config, manifest, manifestFiles, req, res) {
         manifest
       );
       debug('template :: %o', webPage);
-      cache.set('template', webPage);
-      debug('set template cache');
+      if (needHtmlCache) {
+        cache.set('template', webPage);
+        debug('set template cache');
+      }
     } else {
       debug('reuse template cache');
     }
