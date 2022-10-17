@@ -359,6 +359,8 @@ class Storage implements IStorageHandler {
     async.eachSeries(
       Object.keys(this.uplinks),
       function (up_name, cb): void {
+        // FIXME: Disable uplink search
+        return cb();
         // shortcut: if `local=1` is supplied, don't call uplinks
         if (options.req?.query?.local !== undefined) {
           return cb();
